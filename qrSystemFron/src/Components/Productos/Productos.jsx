@@ -217,15 +217,15 @@ const Productos = () => {
                         </section>
                         <section className="col-md-4 mb-2 ">
                             <span className="text-light fw-bold d-block">Fecha: </span>
-                            <DatePicker
-                                className="form-control"
-                                selectsRange={true}
-                                startDate={startDate}
-                                endDate={endDate}
-                                onChange={(update) => changeDate(update)}
-                                isClearable={true}
-                                placeholderText="Seleccione el rango"
-                            />
+                            {/* <DatePicker */}
+                                {/* className="form-control" */}
+                                {/* selectsRange={true} */}
+                                {/* startDate={startDate} */}
+                                {/* endDate={endDate} */}
+                                {/* onChange={(update) => changeDate(update)} */}
+                                {/* isClearable={true} */}
+                                {/* placeholderText="Seleccione el rango" */}
+                            {/* /> */}
                         </section>
                     </section>
                 </section>
