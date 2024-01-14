@@ -30,7 +30,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         };
     }, []);
     useEffect(() => {
-        fetch('https://qrsystemback.onrender.com/products/suggest')
+        fetch('https://stocksystemback.onrender.com/products/suggest')
             .then(response => response.json())
             .then(data => setArticulos(data))
             .catch(error => console.error(error));
@@ -38,7 +38,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     useEffect(() => {
         setError("")
         if (productid) {
-            fetch(`https://qrsystemback.onrender.com/products/${idprod}`)
+            fetch(`https://stocksystemback.onrender.com/products/${idprod}`)
                 .then(response => response.json())
                 .then(data => {
                     // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
@@ -231,7 +231,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         if (producto.quantityb == 0 && producto.quantityu == 0) {
             try {
-                fetch(`https://qrsystemback.onrender.com/products/${productid}`, {
+                fetch(`https://stocksystemback.onrender.com/products/${productid}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -272,7 +272,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         else if (productid) {
             // Si hay un ID, intenta hacer el PUT
             try {
-                const respuesta = await fetch(`https://qrsystemback.onrender.com/products`, {
+                const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -318,7 +318,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     quantityu: productoExistente.quantityu + producto.quantityu
                 };
                 try {
-                    const respuesta = await fetch(`https://qrsystemback.onrender.com/products`, {
+                    const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -348,7 +348,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         else {
 
             try {
-                const respuesta = await fetch('https://qrsystemback.onrender.com/products', {
+                const respuesta = await fetch('https://stocksystemback.onrender.com/products', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

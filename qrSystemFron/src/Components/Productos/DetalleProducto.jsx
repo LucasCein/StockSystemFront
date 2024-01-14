@@ -11,7 +11,7 @@ const Detallespanroducto = () => {
         // Función spanara cargar los datos del spanroducto
         const cargarDatosProducto = async () => {
             try {
-                const respuesta = await fetch(`https://qrsystemback.onrender.com/products/${productid}`);
+                const respuesta = await fetch(`https://stocksystemback.onrender.com/products/${productid}`);
                 const jsonData = await respuesta.json()
                 // Dividimos la cadena de fecha en sus componentes (año, mes, día)
                 let dateParts = jsonData.date.split('-');
