@@ -49,7 +49,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
-                fetch(`https://stocksystemback.onrender.com/products/${productid}`, {
+                fetch(`https://stocksystemback-uorn.onrender.com/products/${productid}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -126,7 +126,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
     
     
     const getQR = async (productid) => {
-        const response = await fetch(`https://stocksystemback.onrender.com/products/${productid}`);
+        const response = await fetch(`https://stocksystemback-uorn.onrender.com/products/${productid}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

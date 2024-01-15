@@ -20,7 +20,7 @@ const Productos = () => {
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
-        fetch('https://stocksystemback.onrender.com/products')
+        fetch('https://stocksystemback-uorn.onrender.com/products')
             .then(response => response.json())
             .then(data => {
                 setProductos(data);
