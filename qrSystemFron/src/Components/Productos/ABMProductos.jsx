@@ -67,8 +67,8 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         code: '',
         quantityb: 0,
         quantityu: 0,
-        date: '',
-        idealstock: '',
+        date: new Date().toISOString().split('T')[0],
+        idealstock: 0,
         codbarras:'',
         codprov:''
     });
@@ -307,46 +307,46 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
             }
         }
         //art.code == producto.code && formatToDDMMYYYY(art.date) == producto.date
-        // else if (productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
-        //     const productoExistente = productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
-        //     console.log(productoExistente)
-        //     if (productoExistente) {
-        //         // Actualizar cantidades del producto existente
-        //         const productoActualizado = {
-        //             ...productoExistente,
-        //             quantityb: productoExistente.quantityb + producto.quantityb,
-        //             quantityu: productoExistente.quantityu + producto.quantityu
-        //         };
-        //         try {
-        //             const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
-        //                 method: 'PUT',
-        //                 headers: {
-        //                     'Content-Type': 'application/json'
-        //                 },
-        //                 body: JSON.stringify(productoActualizado)
-        //             });
+        else if (productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
+            const productoExistente = productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
+            console.log(productoExistente)
+            if (productoExistente) {
+                // Actualizar cantidades del producto existente
+                const productoActualizado = {
+                    ...productoExistente,
+                    quantityb: productoExistente.quantityb + producto.quantityb,
+                    quantityu: productoExistente.quantityu + producto.quantityu
+                };
+                try {
+                    const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(productoActualizado)
+                    });
 
-        //             if (!respuesta.ok) {
-        //                 throw new Error(`HTTP error! status: ${respuesta.status}`);
-        //             }
-        //             const MySwal = withReactContent(Swal)
-        //             MySwal.fire({
-        //                 title: <strong>Se ha agregado con Exito!</strong>,
-        //                 icon: 'success',
-        //                 preConfirm: () => {
-        //                     navigate("/productos")
-        //                 }
-        //             })
-        //             // Código para manejar la respuesta exitosa
-        //         } catch (error) {
-        //             console.error('Error al actualizar el producto:', error);
-        //             setError(error.message);
-        //         }
-        //     }
+                    if (!respuesta.ok) {
+                        throw new Error(`HTTP error! status: ${respuesta.status}`);
+                    }
+                    const MySwal = withReactContent(Swal)
+                    MySwal.fire({
+                        title: <strong>Se ha agregado con Exito!</strong>,
+                        icon: 'success',
+                        preConfirm: () => {
+                            navigate("/productos")
+                        }
+                    })
+                    // Código para manejar la respuesta exitosa
+                } catch (error) {
+                    console.error('Error al actualizar el producto:', error);
+                    setError(error.message);
+                }
+            }
 
-        // }
+        }
         else {
-
+            
             try {
                 const respuesta = await fetch('https://stocksystemback.onrender.com/products', {
                     method: 'POST',
@@ -388,8 +388,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         }
         setError("")
     };
-    console.log(producto.date)
-    console.log('suggs', suggestions)
+
     return (
         <section>
             <h1 className="text-center text-dark mb-4">{productid ? 'Editar Producto' : 'Agregar Producto'}</h1>
@@ -403,7 +402,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov })
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov})
                                     setSuggestions([]);
                                    
                                 }}>
