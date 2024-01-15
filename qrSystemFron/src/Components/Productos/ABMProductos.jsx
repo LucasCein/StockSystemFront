@@ -224,7 +224,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     const handleSubmit = async (e) => {
         if (e) e.preventDefault()
         console.log(producto.name, producto.code, producto.idealstock)
-        if (!producto.name || !producto.code || !producto.idealstock) {
+        if (!producto.name || !producto.code ) {
             setError("Todos los campos son obligatorios");
             return;
         }
@@ -307,44 +307,44 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
             }
         }
         //art.code == producto.code && formatToDDMMYYYY(art.date) == producto.date
-        else if (productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
-            const productoExistente = productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
-            console.log(productoExistente)
-            if (productoExistente) {
-                // Actualizar cantidades del producto existente
-                const productoActualizado = {
-                    ...productoExistente,
-                    quantityb: productoExistente.quantityb + producto.quantityb,
-                    quantityu: productoExistente.quantityu + producto.quantityu
-                };
-                try {
-                    const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(productoActualizado)
-                    });
+        // else if (productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
+        //     const productoExistente = productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
+        //     console.log(productoExistente)
+        //     if (productoExistente) {
+        //         // Actualizar cantidades del producto existente
+        //         const productoActualizado = {
+        //             ...productoExistente,
+        //             quantityb: productoExistente.quantityb + producto.quantityb,
+        //             quantityu: productoExistente.quantityu + producto.quantityu
+        //         };
+        //         try {
+        //             const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
+        //                 method: 'PUT',
+        //                 headers: {
+        //                     'Content-Type': 'application/json'
+        //                 },
+        //                 body: JSON.stringify(productoActualizado)
+        //             });
 
-                    if (!respuesta.ok) {
-                        throw new Error(`HTTP error! status: ${respuesta.status}`);
-                    }
-                    const MySwal = withReactContent(Swal)
-                    MySwal.fire({
-                        title: <strong>Se ha agregado con Exito!</strong>,
-                        icon: 'success',
-                        preConfirm: () => {
-                            navigate("/productos")
-                        }
-                    })
-                    // Código para manejar la respuesta exitosa
-                } catch (error) {
-                    console.error('Error al actualizar el producto:', error);
-                    setError(error.message);
-                }
-            }
+        //             if (!respuesta.ok) {
+        //                 throw new Error(`HTTP error! status: ${respuesta.status}`);
+        //             }
+        //             const MySwal = withReactContent(Swal)
+        //             MySwal.fire({
+        //                 title: <strong>Se ha agregado con Exito!</strong>,
+        //                 icon: 'success',
+        //                 preConfirm: () => {
+        //                     navigate("/productos")
+        //                 }
+        //             })
+        //             // Código para manejar la respuesta exitosa
+        //         } catch (error) {
+        //             console.error('Error al actualizar el producto:', error);
+        //             setError(error.message);
+        //         }
+        //     }
 
-        }
+        // }
         else {
 
             try {
@@ -476,18 +476,18 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         </div>
                     </div>
                 </section>
-                <section className="row mb-3">
-                    <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label>
-                    <div className="col-sm-8">
-                        <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required />
-                    </div>
-                </section>
-                <section className="row mb-3">
-                    <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label>
-                    <div className="col-sm-8">
-                        <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required />
-                    </div>
-                </section>
+                {/* <section className="row mb-3"> */}
+                    {/* <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label> */}
+                    {/* <div className="col-sm-8"> */}
+                        {/* <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required /> */}
+                    {/* </div> */}
+                {/* </section> */}
+                {/* <section className="row mb-3"> */}
+                    {/* <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label> */}
+                    {/* <div className="col-sm-8"> */}
+                        {/* <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required /> */}
+                    {/* </div> */}
+                {/* </section> */}
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-success mt-4">{productid ? 'Editar' : 'Agregar'}</button>
                 </div>
