@@ -175,7 +175,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
     return (
         <div>
-            {currentItems.map(({ productid, name, code, date, quantityu, quantityb,codprov,codbarras }) => (
+            {currentItems.map(({ productid, name, code, date, quantityu, quantityb,codprov,codbarras, unxcaja, total }) => (
                 <MDBListGroupItem key={productid} className="container align-items-center justify-content-center" >
 
                     <div className="row w-100">
@@ -204,12 +204,12 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                             <p className="mb-0 text-dark">{quantityb}</p>
                         </div>
                         {/* cant x caja */}
-                        <div className="col-12 col-md-1 d-flex justify-content-center align-items-center  ">
-                            <p className="mb-0 text-dark">{quantityb}</p>
+                        <div className="col-12 col-md-1 d-flex justify-content-end align-items-center  ">
+                            <p className="mb-0 text-dark">{unxcaja}</p>
                         </div>
                         {/* total */}
-                        <div className="col-12 col-md-1 d-flex justify-content-center align-items-center  ">
-                            <p className="mb-0 text-dark">{quantityb}</p>
+                        <div className="col-12 col-md-1 d-flex justify-content-end align-items-center  ">
+                            <p className="mb-0 text-dark ">{total}</p>
                         </div>
                         {/* <div className="col d-flex justify-content-center align-items-center  ">
                             <p className="mb-0 text-dark">{idealstock}</p>

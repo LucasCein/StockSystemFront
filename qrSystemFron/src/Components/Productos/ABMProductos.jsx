@@ -70,7 +70,8 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         date: new Date().toISOString().split('T')[0],
         idealstock: 0,
         codbarras:'',
-        codprov:''
+        codprov:'',
+        unxcaja:''
     });
     const [error, setError] = useState(""); // Estado para manejar los mensajes de error
     console.log(articulos)
@@ -115,6 +116,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 setProducto({ ...producto, [name]: value });
             }
         }
+        
     };
     const handleChangeBarras=(e)=>{
         const {name,value}=e.target
@@ -125,7 +127,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         }
         setProducto({ ...producto, [name]: value })
         const prod=articulos.find(art=>art[name]==value)
-        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov})
+        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov, unxcaja:prod.unxcaja})
     }
     console.log(productos)
     const navigateToNextProduct = () => {
@@ -140,6 +142,10 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
     }
     const handleKeyDown = (e) => {
+        if (e.key === "Enter" && document.activeElement === codBarrasRef.current) {
+            e.preventDefault(); // Prevenir el envío del formulario
+            // Aquí puedes agregar lógica adicional si necesitas hacer algo después de leer el código de barras
+        }
         const currentActive = document.activeElement;
         switch (e.key) {
             case "ArrowRight":
@@ -271,13 +277,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         else if (productid) {
             // Si hay un ID, intenta hacer el PUT
+            const total=(parseInt(producto.quantityb)*parseInt(producto.unxcaja))+parseInt(producto.quantityu)
             try {
                 const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(producto)
+                    body: JSON.stringify({...producto,total:total})
                 })
 
                 if (!respuesta.ok) {
@@ -315,7 +322,8 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 const productoActualizado = {
                     ...productoExistente,
                     quantityb: productoExistente.quantityb + producto.quantityb,
-                    quantityu: productoExistente.quantityu + producto.quantityu
+                    quantityu: productoExistente.quantityu + producto.quantityu,
+                    total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb))*parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu)+parseInt(producto.quantityu))
                 };
                 try {
                     const respuesta = await fetch(`https://stocksystemback.onrender.com/products`, {
@@ -353,7 +361,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(producto)
+                    body: JSON.stringify({...producto, total:(producto.quantityb*producto.unxcaja)+producto.quantityu})
                 });
 
                 if (!respuesta.ok) {
@@ -402,7 +410,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov})
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
                                     setSuggestions([]);
                                    
                                 }}>
@@ -427,7 +435,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov })
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
                                     setSuggestions([]);
                                     
                                 }}>
@@ -446,7 +454,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov })
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
                                     setSuggestions([]);
                                     
                                 }}>
