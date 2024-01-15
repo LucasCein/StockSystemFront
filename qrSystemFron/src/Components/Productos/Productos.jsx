@@ -30,7 +30,7 @@ const Productos = () => {
                 console.error(error);
             });
     };
-
+    console.log(productos)
     useEffect(() => {
         actualizarListaProductos();
     }, []);
@@ -71,7 +71,8 @@ const Productos = () => {
             'Descripcion': item.name,
             'Cod Proveedor': item.codprov,
             'Cantidad Unid.': item.quantityu,
-            'Cantidad Bulto': item.quantityb
+            'Cantidad Bulto': item.quantityb,
+
         }));
     }
     
@@ -215,8 +216,8 @@ const Productos = () => {
                             <span className="text-light fw-bold">Nombre:</span>
                             <input type="text" className="form-control" placeholder="Ingresa el Nombre" name='name' onChange={onChange} />
                         </section>
-                        <section className="col-md-4 mb-2 ">
-                            <span className="text-light fw-bold d-block">Fecha: </span>
+                        {/* <section className="col-md-4 mb-2 "> */}
+                            {/* <span className="text-light fw-bold d-block">Fecha: </span> */}
                             {/* <DatePicker */}
                                 {/* className="form-control" */}
                                 {/* selectsRange={true} */}
@@ -226,7 +227,7 @@ const Productos = () => {
                                 {/* isClearable={true} */}
                                 {/* placeholderText="Seleccione el rango" */}
                             {/* /> */}
-                        </section>
+                        {/* </section> */}
                     </section>
                 </section>
             </section>
@@ -246,8 +247,8 @@ const Productos = () => {
 
                 <section className="container pt-1 rounded d-none d-md-flex align-items-center justify-content-center bg-black">
                     <section className="row w-100">
-                        <section className="col-12 col-md d-flex justify-content-center">
-                        </section>
+                        {/* <section className="col-12 col-md d-flex justify-content-center"> */}
+                        {/* </section> */}
 
                         <section className="col-12 col-md d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('name')}>Nombre</p>
@@ -255,14 +256,19 @@ const Productos = () => {
 
 
                         <section className="col-12 col-md d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('code')}>Codigo</p>
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('code')}>Cod. Interno</p>
                         </section>
-
 
                         <section className="col-12 col-md d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('date')}>Fecha Venc</p>
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('code')}>Cod. Proveedor</p>
                         </section>
-
+                        <section className="col-12 col-md d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('code')}>Cod. Barras</p>
+                        </section>
+                        {/* <section className="col-12 col-md d-flex justify-content-center"> */}
+                            {/* <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('date')}>Fecha Venc</p> */}
+                        {/* </section> */}
+{/*  */}
 
                         <section className="col-12 col-md d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('quantityu')}>Cant Unid.</p>
@@ -272,8 +278,12 @@ const Productos = () => {
                         <section className="col-12 col-md d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('quantityb')}>Cant Bulto</p>
                         </section>
-
-
+                        <section className="col-12 col-md d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" >Cant. x Caja</p>
+                        </section>
+                        <section className="col-12 col-md d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" >Total</p>
+                        </section>
                         <section className="col-12 col-md d-flex justify-content-center ">
                             <p className="fw-bold text-light mb-0 d-none d-md-block">Acciones</p>
                         </section>
