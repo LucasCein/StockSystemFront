@@ -72,7 +72,8 @@ const Productos = () => {
             'Cod Proveedor': item.codprov,
             'Cantidad Unid.': item.quantityu,
             'Cantidad Bulto': item.quantityb,
-            'Unid. x Caja': item.unxcaja
+            'Unid. x Caja': item.unxcaja,
+            'Total': item.total,
         }));
     }
     
