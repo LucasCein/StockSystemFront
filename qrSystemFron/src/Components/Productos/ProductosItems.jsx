@@ -8,6 +8,7 @@ import { BsPencilFill } from "react-icons/bs";
 import ABMProductos from "./ABMProductos";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import "./css/prodItems.css"
 const ProductosItems = ({ productos, actualizarListaProductos }) => {
     const [prods, setProds] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
@@ -182,7 +183,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                         {/* <div className="col-12 col-md-2 d-flex justify-content-center "> */}
                             {/* <div className="color-square" style={{ backgroundColor: generateSquareColor(date) }}></div> */}
                         {/* </div> */}
-                        <div className="col-12 col-md-2 d-flex justify-content-center align-items-center  ">
+                        <div className="col-12 col-md-2 d-flex justify-content-center align-items-center " data-label:"Nombre:">
                             <p className="mb-0 text-dark">{name}</p>
                         </div>
                         <div className="col-12 col-md-1 d-flex justify-content-center align-items-center  ">

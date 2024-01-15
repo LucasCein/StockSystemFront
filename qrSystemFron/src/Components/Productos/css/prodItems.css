@@ -1,0 +1,26 @@
+@media screen and (max-width: 768px) {
+    .responsive-table {
+        display: block;
+        width: 100%;
+    }
+
+    .responsive-table .row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .responsive-table .col {
+        margin: 5px 0;
+    }
+
+    .responsive-table .col:before {
+        content: attr(data-label);
+        font-weight: bold;
+        width: 100px;
+        display: inline-block;
+    }
+}
