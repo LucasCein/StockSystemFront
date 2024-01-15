@@ -1,9 +1,7 @@
+.responsive-table .label {
+    display: none;
+}
 @media screen and (max-width: 768px) {
-    .responsive-table {
-        display: block;
-        width: 100%;
-    }
-
     .responsive-table .row {
         display: flex;
         flex-direction: column;
@@ -17,10 +15,14 @@
         margin: 5px 0;
     }
 
-    .responsive-table .col:before {
-        content: attr(data-label);
+    .responsive-table .label {
         font-weight: bold;
-        width: 100px;
         display: inline-block;
     }
+
+    .responsive-table .value {
+        display: inline-block;
+        margin-left: 5px;
+    }
 }
+

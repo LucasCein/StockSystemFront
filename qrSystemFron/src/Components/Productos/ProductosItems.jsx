@@ -183,8 +183,8 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                         {/* <div className="col-12 col-md-2 d-flex justify-content-center "> */}
                             {/* <div className="color-square" style={{ backgroundColor: generateSquareColor(date) }}></div> */}
                         {/* </div> */}
-                        <div className="col-12 col-md-2 d-flex justify-content-center align-items-center " data-label:"Nombre:">
-                            <p className="mb-0 text-dark">{name}</p>
+                        <div className="col-12 col-md-2 d-flex justify-content-center align-items-center ">
+                            <p className="mb-0 text-dark value">{name}</p>
                         </div>
                         <div className="col-12 col-md-1 d-flex justify-content-center align-items-center  ">
                             <p className="mb-0 text-dark">{code}</p>
@@ -205,11 +205,11 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                             <p className="mb-0 text-dark">{quantityb}</p>
                         </div>
                         {/* cant x caja */}
-                        <div className="col-12 col-md-1 d-flex justify-content-end align-items-center  ">
+                        <div className="col-12 col-md-1 d-flex justify-content-md-end justify-content-center align-items-center  ">
                             <p className="mb-0 text-dark">{unxcaja}</p>
                         </div>
                         {/* total */}
-                        <div className="col-12 col-md-1 d-flex justify-content-end align-items-center  ">
+                        <div className="col-12 col-md-1 d-flex justify-content-md-end justify-content-center align-items-center  ">
                             <p className="mb-0 text-dark ">{total}</p>
                         </div>
                         {/* <div className="col d-flex justify-content-center align-items-center  ">
@@ -219,7 +219,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                             <p className="mb-0 text-dark">{missingstock}</p>
                         </div> */}
 
-                        <div className="col-12 col-md-2 d-flex justify-content-end align-items-center gap-2 ">
+                        <div className="col-12 col-md-2 d-flex justify-content-md-end justify-content-center align-items-center gap-2 ">
                             <section>
                                 <Popup trigger={<div><BsPencilFill className="icon " cursor={"pointer"} /></div>} position="center center" modal>
                                     {close => <ABMProductos productid={productid} close={close} actualizarListaProductos={actualizarListaProductos} productos={productos}></ABMProductos>}
