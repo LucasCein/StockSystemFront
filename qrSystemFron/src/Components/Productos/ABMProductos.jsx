@@ -127,7 +127,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         }
         setProducto({ ...producto, [name]: value })
         const prod=articulos.find(art=>art[name]==value)
-        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov, unxcaja:prod.unxcaja})
+        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov, unxcaja:prod.unxcaja, familia: prod.familia})
     }
     console.log(productos)
     const navigateToNextProduct = () => {
@@ -410,7 +410,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
                                    
                                 }}>
@@ -435,7 +435,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
                                     
                                 }}>
@@ -454,7 +454,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
                                     
                                 }}>

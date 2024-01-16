@@ -45,25 +45,56 @@ const Productos = () => {
     function formatToDDMMYYYY(dateString) {
         // Dividimos la cadena de fecha en sus componentes (año, mes, día)
         let dateParts = dateString.split('-');
-    
+
         // Convertimos los componentes en números enteros
         // Date interpreta los meses desde 0 (enero) hasta 11 (diciembre), por lo que restamos 1 al mes
         let year = parseInt(dateParts[0], 10);
         let month = parseInt(dateParts[1], 10) - 1;
         let day = parseInt(dateParts[2], 10);
-    
+
         // Creamos un objeto de fecha con los componentes
         let date = new Date(year, month, day);
-    
+
         // Obtenemos el día, mes y año del objeto de fecha
         // Asegurándonos de añadir un cero delante si es menor de 10
         let formattedDay = ('0' + date.getDate()).slice(-2);
         let formattedMonth = ('0' + (date.getMonth() + 1)).slice(-2);
         let formattedYear = date.getFullYear();
-    
+
         // Construimos la cadena con el formato DD/MM/YYYY
         return `${formattedDay}/${formattedMonth}/${formattedYear}`;
     }
+
+    const agruparPorFamilia = (productos) => {
+        return productos.reduce((acc, producto) => {
+            // Asumiendo que cada producto tiene una propiedad 'familia'
+            if (!acc[producto.familia]) {
+                acc[producto.familia] = [];
+            }
+            acc[producto.familia].push(producto);
+            return acc;
+        }, {});
+    };
+    const prepararDatosParaExcel = (productosAgrupados) => {
+        const datosExcel = [];
+        for (const familia in productosAgrupados) {
+            productosAgrupados[familia].forEach(item => {
+                datosExcel.push({
+                    'Codigo': item.code,
+                    'EAN': item.codbarras,
+                    'Descripcion': item.name,
+                    'Familia': item.familia,
+                    'Cod Proveedor': item.codprov,
+                    'Cantidad Unid.': item.quantityu,
+                    'Cantidad Bulto': item.quantityb,
+                    'Unid. x Caja': item.unxcaja,
+                    'Total': item.total,
+                });
+            });
+        }
+        return datosExcel;
+    };
+
     const mapDataForExcel = (data) => {
         return data.map(item => ({
             'Codigo': item.code,
@@ -76,13 +107,14 @@ const Productos = () => {
             'Total': item.total,
         }));
     }
-    
+
     const exportToExcel = (apiData, fileName) => {
-        const mappedData = mapDataForExcel(apiData);
+        const productosAgrupados = agruparPorFamilia(apiData);
+        const datosParaExcel = prepararDatosParaExcel(productosAgrupados);
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
 
-        const ws = XLSX.utils.json_to_sheet(mappedData);
+        const ws = XLSX.utils.json_to_sheet(datosParaExcel);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const data = new Blob([excelBuffer], { type: fileType });
@@ -218,16 +250,16 @@ const Productos = () => {
                             <input type="text" className="form-control" placeholder="Ingresa el Nombre" name='name' onChange={onChange} />
                         </section>
                         {/* <section className="col-md-4 mb-2 "> */}
-                            {/* <span className="text-light fw-bold d-block">Fecha: </span> */}
-                            {/* <DatePicker */}
-                                {/* className="form-control" */}
-                                {/* selectsRange={true} */}
-                                {/* startDate={startDate} */}
-                                {/* endDate={endDate} */}
-                                {/* onChange={(update) => changeDate(update)} */}
-                                {/* isClearable={true} */}
-                                {/* placeholderText="Seleccione el rango" */}
-                            {/* /> */}
+                        {/* <span className="text-light fw-bold d-block">Fecha: </span> */}
+                        {/* <DatePicker */}
+                        {/* className="form-control" */}
+                        {/* selectsRange={true} */}
+                        {/* startDate={startDate} */}
+                        {/* endDate={endDate} */}
+                        {/* onChange={(update) => changeDate(update)} */}
+                        {/* isClearable={true} */}
+                        {/* placeholderText="Seleccione el rango" */}
+                        {/* /> */}
                         {/* </section> */}
                     </section>
                 </section>
@@ -267,9 +299,9 @@ const Productos = () => {
                             <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('code')}>Cod. Barras</p>
                         </section>
                         {/* <section className="col-12 col-md d-flex justify-content-center"> */}
-                            {/* <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('date')}>Fecha Venc</p> */}
+                        {/* <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('date')}>Fecha Venc</p> */}
                         {/* </section> */}
-{/*  */}
+                        {/*  */}
 
                         <section className="col-12 col-md d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('quantityu')}>Cant Unid.</p>
