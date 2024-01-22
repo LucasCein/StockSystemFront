@@ -20,6 +20,8 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     const dateRef = useRef(null);
     const idealstockRef = useRef(null);
     const [idprod, setIdProd] = useState(0)
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         setIdProd(productid)
         // Añadir el evento de escucha cuando el componente se monta
@@ -58,10 +60,10 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         const input = quantitybRef.current;
         if (input) {
             input.focus();
-            
+
         }
     }, [quantitybRef]); // Dependencia: quantitybRef
-    
+
     const [producto, setProducto] = useState({
         name: '',
         code: '',
@@ -69,9 +71,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         quantityu: 0,
         date: new Date().toISOString().split('T')[0],
         idealstock: 0,
-        codbarras:'',
-        codprov:'',
-        unxcaja:''
+        codbarras: '',
+        codprov: '',
+        unxcaja: ''
     });
     const [error, setError] = useState(""); // Estado para manejar los mensajes de error
     console.log(articulos)
@@ -99,7 +101,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 setSuggestions([]);
             }
         }
-        else if(name=='name'){
+        else if (name == 'name') {
             setProducto({ ...producto, name: value });
             if (value) {
                 setSuggestions(articulos.filter((art) => art.descripcion.toLowerCase().includes(value.toLowerCase())));
@@ -116,18 +118,18 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 setProducto({ ...producto, [name]: value });
             }
         }
-        
+
     };
-    const handleChangeBarras=(e)=>{
-        const {name,value}=e.target
-        if (value && name=='codprov') {
+    const handleChangeBarras = (e) => {
+        const { name, value } = e.target
+        if (value && name == 'codprov') {
             setSuggestions(articulos.filter((art) => art[name].toLowerCase().includes(value.toLowerCase())));
         } else {
             setSuggestions([]);
         }
         setProducto({ ...producto, [name]: value })
-        const prod=articulos.find(art=>art[name]==value)
-        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov, unxcaja:prod.unxcaja, familia: prod.familia})
+        const prod = articulos.find(art => art[name] == value)
+        setProducto({ ...producto, code: prod.code, name: prod.descripcion, codbarras: prod.codbarras, codprov: prod.codprov, unxcaja: prod.unxcaja, familia: prod.familia })
     }
     console.log(productos)
     const navigateToNextProduct = () => {
@@ -229,8 +231,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     console.log('error:', error)
     const handleSubmit = async (e) => {
         if (e) e.preventDefault()
+        setIsSubmitting(true)
         console.log(producto.name, producto.code, producto.idealstock)
-        if (!producto.name || !producto.code ) {
+        if (!producto.name || !producto.code) {
             setError("Todos los campos son obligatorios");
             return;
         }
@@ -277,14 +280,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         else if (productid) {
             // Si hay un ID, intenta hacer el PUT
-            const total=(parseInt(producto.quantityb)*parseInt(producto.unxcaja))+parseInt(producto.quantityu)
+            const total = (parseInt(producto.quantityb) * parseInt(producto.unxcaja)) + parseInt(producto.quantityu)
             try {
                 const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({...producto,total:total})
+                    body: JSON.stringify({ ...producto, total: total })
                 })
 
                 if (!respuesta.ok) {
@@ -323,7 +326,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     ...productoExistente,
                     quantityb: productoExistente.quantityb + producto.quantityb,
                     quantityu: productoExistente.quantityu + producto.quantityu,
-                    total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb))*parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu)+parseInt(producto.quantityu))
+                    total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb)) * parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu) + parseInt(producto.quantityu))
                 };
                 try {
                     const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
@@ -354,14 +357,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         }
         else {
-            
+
             try {
                 const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/products', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({...producto, total:(producto.quantityb*producto.unxcaja)+producto.quantityu})
+                    body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu })
                 });
 
                 if (!respuesta.ok) {
@@ -395,6 +398,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
             }
         }
         setError("")
+        setIsSubmitting(false)
     };
 
     return (
@@ -410,9 +414,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(), codbarras: articulo.codbarras, codprov: articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
-                                   
+
                                 }}>
                                     {articulo.descripcion} ({articulo.code})
                                 </li>
@@ -435,9 +439,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(), codbarras: articulo.codbarras, codprov: articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
-                                    
+
                                 }}>
                                     {articulo.descripcion} ({articulo.code})
                                 </li>
@@ -454,9 +458,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(), codbarras: articulo.codbarras, codprov: articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
-                                    
+
                                 }}>
                                     {articulo.descripcion} ({articulo.code})
                                 </li>
@@ -484,19 +488,22 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     </div>
                 </section>
                 {/* <section className="row mb-3"> */}
-                    {/* <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label> */}
-                    {/* <div className="col-sm-8"> */}
-                        {/* <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required /> */}
-                    {/* </div> */}
+                {/* <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label> */}
+                {/* <div className="col-sm-8"> */}
+                {/* <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required /> */}
+                {/* </div> */}
                 {/* </section> */}
                 {/* <section className="row mb-3"> */}
-                    {/* <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label> */}
-                    {/* <div className="col-sm-8"> */}
-                        {/* <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required /> */}
-                    {/* </div> */}
+                {/* <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label> */}
+                {/* <div className="col-sm-8"> */}
+                {/* <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required /> */}
+                {/* </div> */}
                 {/* </section> */}
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-success mt-4">{productid ? 'Editar' : 'Agregar'}</button>
+                    <button type="submit" className="btn btn-success mt-4" disabled={isSubmitting}>
+                        {productid ? 'Editar' : 'Agregar'}
+                    </button>
+
                 </div>
                 {/* Mensaje de Error */}
                 {error && <div className="alert alert-danger mt-2 text-center" role="alert">{error}</div>}

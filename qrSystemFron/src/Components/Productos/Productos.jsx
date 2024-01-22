@@ -267,6 +267,7 @@ const Productos = () => {
 
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3">
+                    <button className="btn btn-light me-3" onClick={()=>actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary me-3"
                         onClick={() => exportToExcel(productosOrdenados, 'Productos')}
