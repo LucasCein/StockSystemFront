@@ -19,7 +19,7 @@ const Productos = () => {
     const [startDate, endDate] = dateRange;
     const [orden, setOrden] = useState({ columna: 'date', direccion: 'asc' });
     const navigate=useNavigate()
-
+    const {userName,setUserName}=useContext(ProvRouteContext)
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
@@ -37,7 +37,7 @@ const Productos = () => {
     useEffect(() => {
         actualizarListaProductos();
     }, []);
-
+    console.log(userName)
 
     const cambiarOrden = (columna) => {
         setOrden((ordenActual) => ({
