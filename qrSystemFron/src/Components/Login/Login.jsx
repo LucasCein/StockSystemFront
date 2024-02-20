@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const Login = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
+    const {userName,setUserName}=useContext(ProvRouteContext)
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -22,6 +24,7 @@ const Login = () => {
 
             if (response.ok) {
                 if (responseData.message === 'Login exitoso') {
+                    setUserName(name)
                     // Manejo de login exitoso
                     navigate('/home');
                 }

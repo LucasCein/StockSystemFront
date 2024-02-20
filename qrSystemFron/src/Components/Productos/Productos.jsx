@@ -1,5 +1,5 @@
 import { MDBListGroup, MDBListGroupItem } from "mdb-react-ui-kit";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProductosItems from "./ProductosItems";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css'
@@ -9,6 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./css/prodsCss.css"
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { useNavigate } from "react-router-dom";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -16,6 +18,7 @@ const Productos = () => {
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
     const [orden, setOrden] = useState({ columna: 'date', direccion: 'asc' });
+    const navigate=useNavigate()
 
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
@@ -273,9 +276,10 @@ const Productos = () => {
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>
-                    <Popup trigger={<button className="btn btn-success" style={{ marginRight: '10%' }}>Agregar Nuevo</button>} modal position={'center center'}>
+                    <button className="btn btn-success" style={{ marginRight: '10%' }} onClick={()=>navigate("/abmProductos")}>Agregar Nuevo</button>
+                    {/* <Popup trigger={<button className="btn btn-success" style={{ marginRight: '10%' }}>Agregar Nuevo</button>} modal position={'center center'}>
                         {close => <ABMProductos close={close} productos={productos} actualizarListaProductos={actualizarListaProductos}></ABMProductos>}
-                    </Popup>
+                    </Popup> */}
                 </section>
 
                 <section className="container pt-1 rounded d-none d-md-flex align-items-center justify-content-center bg-black">

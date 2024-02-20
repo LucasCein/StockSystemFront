@@ -9,6 +9,7 @@ import Header from './Components/Header/Header'
 import Productos from './Components/Productos/Productos'
 import DetalleProducto from './Components/Productos/DetalleProducto'
 import Login from './Components/Login/Login'
+import ABMProductos from './Components/Productos/ABMProductos'
 
 
 function App() {
@@ -22,9 +23,9 @@ function App() {
 
     <MyProvider>
       <BrowserRouter>
-      
+
         <Routes>
-        <Route
+          <Route
             path='/home'
             element={<div className='grid-container'>
               <Header OpenSidebar={OpenSidebar} />
@@ -42,6 +43,15 @@ function App() {
             }
           />
           <Route
+            path='/abmProductos'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <ABMProductos></ABMProductos>
+            </div>
+            }
+          />
+          <Route
             path='/products/:productid'
             element={
               <DetalleProducto></DetalleProducto>
@@ -55,7 +65,7 @@ function App() {
             </div>
             }
           />
-           <Route
+          <Route
             path='/'
             element={<div><Login></Login></div>
             }

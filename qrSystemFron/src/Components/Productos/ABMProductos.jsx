@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import './css/abmprods.css'
 import Popup from "reactjs-popup";
-const ABMProductos = ({ close, productid, productos, actualizarListaProductos }) => {
+import { BsSearch } from "react-icons/bs";
+import ProdsSugs from "./ProdsSugs";
+import CustomSpinner from "../CustomSpinner/CustomSpinner";
+const ABMProductos = () => {
     const navigate = useNavigate()
+    const location= useLocation()
+    const { productid = null} = location.state || {};
+    const [productos, setProductos] = useState([])
     const [articulos, setArticulos] = useState([])
     const [suggestions, setSuggestions] = useState([]);
     const [suggestionP, setSuggestionP] = useState([]);
@@ -20,8 +26,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     const dateRef = useRef(null);
     const idealstockRef = useRef(null);
     const [idprod, setIdProd] = useState(0)
+    const [isLoading,setIsLoading]=useState(true)
+    const [aux, setAux] = useState("")
     useEffect(() => {
+        if(productid == null){
+            setIsLoading(false)
+        }
         setIdProd(productid)
+        
         // Añadir el evento de escucha cuando el componente se monta
         window.addEventListener("keydown", handleKeyDown);
         // Eliminar el evento de escucha cuando el componente se desmonta
@@ -33,6 +45,12 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         fetch('https://stocksystemback-uorn.onrender.com/products/suggest')
             .then(response => response.json())
             .then(data => setArticulos(data))
+            .catch(error => console.error(error));
+    }, [])
+    useEffect(() => {
+        fetch('https://stocksystemback-uorn.onrender.com/products')
+            .then(response => response.json())
+            .then(data => setProductos(data))
             .catch(error => console.error(error));
     }, [])
     useEffect(() => {
@@ -48,6 +66,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         date: fechaAjustada // Aquí aseguras que la fecha esté en el formato correcto
                     });
                 })
+                .then(() => setIsLoading(false))
                 .catch(error => {
                     console.error(error);
                 });
@@ -58,10 +77,10 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         const input = quantitybRef.current;
         if (input) {
             input.focus();
-            
+
         }
     }, [quantitybRef]); // Dependencia: quantitybRef
-    
+
     const [producto, setProducto] = useState({
         name: '',
         code: '',
@@ -69,9 +88,9 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         quantityu: 0,
         date: new Date().toISOString().split('T')[0],
         idealstock: 0,
-        codbarras:'',
-        codprov:'',
-        unxcaja:''
+        codbarras: '',
+        codprov: '',
+        unxcaja: ''
     });
     const [error, setError] = useState(""); // Estado para manejar los mensajes de error
     console.log(articulos)
@@ -99,7 +118,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 setSuggestions([]);
             }
         }
-        else if(name=='name'){
+        else if (name == 'name') {
             setProducto({ ...producto, name: value });
             if (value) {
                 setSuggestions(articulos.filter((art) => art.descripcion.toLowerCase().includes(value.toLowerCase())));
@@ -116,18 +135,18 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                 setProducto({ ...producto, [name]: value });
             }
         }
-        
+
     };
-    const handleChangeBarras=(e)=>{
-        const {name,value}=e.target
-        if (value && name=='codprov') {
+    const handleChangeBarras = (e) => {
+        const { name, value } = e.target
+        if (value && name == 'codprov') {
             setSuggestions(articulos.filter((art) => art[name].toLowerCase().includes(value.toLowerCase())));
         } else {
             setSuggestions([]);
         }
         setProducto({ ...producto, [name]: value })
-        const prod=articulos.find(art=>art[name]==value)
-        setProducto({...producto,code:prod.code,name:prod.descripcion,codbarras:prod.codbarras,codprov:prod.codprov, unxcaja:prod.unxcaja, familia: prod.familia})
+        const prod = articulos.find(art => art[name] == value)
+        setProducto({ ...producto, code: prod.code, name: prod.descripcion, codbarras: prod.codbarras, codprov: prod.codprov, unxcaja: prod.unxcaja, familia: prod.familia })
     }
     console.log(productos)
     const navigateToNextProduct = () => {
@@ -230,7 +249,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
     const handleSubmit = async (e) => {
         if (e) e.preventDefault()
         console.log(producto.name, producto.code, producto.idealstock)
-        if (!producto.name || !producto.code ) {
+        if (!producto.name || !producto.code) {
             setError("Todos los campos son obligatorios");
             return;
         }
@@ -277,14 +296,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         else if (productid) {
             // Si hay un ID, intenta hacer el PUT
-            const total=(parseInt(producto.quantityb)*parseInt(producto.unxcaja))+parseInt(producto.quantityu)
+            const total = (parseInt(producto.quantityb) * parseInt(producto.unxcaja)) + parseInt(producto.quantityu)
             try {
                 const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({...producto,total:total})
+                    body: JSON.stringify({ ...producto, total: total })
                 })
 
                 if (!respuesta.ok) {
@@ -314,8 +333,8 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
             }
         }
         //art.code == producto.code && formatToDDMMYYYY(art.date) == producto.date
-        else if (productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
-            const productoExistente = productos.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
+        else if (productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
+            const productoExistente = productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
             console.log(productoExistente)
             if (productoExistente) {
                 // Actualizar cantidades del producto existente
@@ -323,7 +342,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     ...productoExistente,
                     quantityb: productoExistente.quantityb + producto.quantityb,
                     quantityu: productoExistente.quantityu + producto.quantityu,
-                    total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb))*parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu)+parseInt(producto.quantityu))
+                    total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb)) * parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu) + parseInt(producto.quantityu))
                 };
                 try {
                     const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
@@ -354,14 +373,14 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
         }
         else {
-            
+
             try {
                 const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/products', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({...producto, total:(producto.quantityb*producto.unxcaja)+producto.quantityu})
+                    body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu })
                 });
 
                 if (!respuesta.ok) {
@@ -386,7 +405,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
 
 
         }
-        actualizarListaProductos();
+        // actualizarListaProductos();
         if (productid) {
             const nextProd = navigateToNextProduct()
             if (nextProd == null) {
@@ -396,78 +415,89 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
         }
         setError("")
     };
-
+    console.log('llego prod', producto)
     return (
+        isLoading ? <CustomSpinner /> :
         <section>
-            <h1 className="text-center text-dark mb-4">{productid ? 'Editar Producto' : 'Agregar Producto'}</h1>
+            <h1 className="text-center text-light mb-4 mt-3">{productid ? 'Editar Producto' : 'Agregar Producto'}</h1>
             <form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: '500px' }}>
                 <section className="row mb-3">
-                    <label htmlFor="name" className="col-sm-4 col-form-label">Codigo:</label>
-                    <div className="col-sm-8">
-                        <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
-                    </div>
-                    {suggestions.length > 0 && (
-                        <ul className="suggestions mt-5 w-50">
-                            {suggestions.map((articulo, index) => (
-                                <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
-                                    setSuggestions([]);
-                                   
-                                }}>
-                                    {articulo.descripcion} ({articulo.code})
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </section>
-                <section className="row mb-3">
-                    <label htmlFor="name" className="col-sm-4 col-form-label">Cod. Barras:</label>
+                    <label htmlFor="name" className="col-sm-4 col-form-label text-light">Cod. Barras:</label>
                     <div className="col-sm-8">
                         <input type="text" className="form-control" id="codBarras" name="codbarras" ref={codBarrasRef} placeholder="Cod. Barras" onChange={handleChangeBarras} value={producto.codbarras} required />
                     </div>
                 </section>
                 <section className="row mb-3">
-                    <label htmlFor="name" className="col-sm-4 col-form-label">Cod. Prov:</label>
-                    <div className="col-sm-8">
+                    <label htmlFor="name" className="col-sm-4 col-form-label text-light">Codigo:</label>
+                    <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
+                        <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
+                        <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
+                        </Popup>
+                    </div>
+                    {/* {suggestions.length > 0 && (
+                        <ul className="suggestions mt-5 w-50">
+                            {suggestions.map((articulo, index) => (
+                                <li key={index} onClick={() => {
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setSuggestions([]);
+                                
+                                }}>
+                                    {articulo.descripcion} ({articulo.code})
+                                </li>
+                            ))}
+                        </ul>
+                    )} */}
+                </section>
+
+                <section className="row mb-3">
+                    <label htmlFor="name" className="col-sm-4 col-form-label text-light">Cod. Prov:</label>
+                    <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                         <input type="text" className="form-control" id="codProv" name="codprov" ref={codProvRef} placeholder="Cod. Prov." onChange={handleChangeBarras} value={producto.codprov} required />
+                        <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            {close => <ProdsSugs name={"codprov"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
+                        </Popup>
                     </div>
-                    {suggestions.length > 0 && (
+                    {/* {suggestions.length > 0 && (
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(), codbarras: articulo.codbarras, codprov: articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
-                                    
+
                                 }}>
                                     {articulo.descripcion} ({articulo.code})
                                 </li>
                             ))}
                         </ul>
-                    )}
+                    )} */}
                 </section>
                 <section className="row mb-3">
-                    <label htmlFor="name" className="col-sm-4 col-form-label">Nombre:</label>
-                    <div className="col-sm-8">
+                    <label htmlFor="name" className="col-sm-4 col-form-label text-light">Nombre:</label>
+                    <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                         <input type="text" className="form-control" id="name" name="name" ref={nameRef} placeholder="Nombre" onChange={handleChange} value={producto.name} required />
+                        <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            {close => <ProdsSugs name={"descripcion"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
+                        </Popup>
                     </div>
-                    {suggestions.length > 0 && (
+                    {/* {suggestions.length > 0 && (
                         <ul className="suggestions mt-5 w-50">
                             {suggestions.map((articulo, index) => (
                                 <li key={index} onClick={() => {
-                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(),codbarras:articulo.codbarras, codprov:articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
+                                    setProducto({ ...producto, code: articulo.code, name: articulo.descripcion.toLowerCase(), codbarras: articulo.codbarras, codprov: articulo.codprov, unxcaja: articulo.unxcaja, familia: articulo.familia });
                                     setSuggestions([]);
-                                    
+
                                 }}>
                                     {articulo.descripcion} ({articulo.code})
                                 </li>
                             ))}
                         </ul>
-                    )}
+                    )} */}
                 </section>
                 <section className="row mb-3">
-                    <label htmlFor="quantity" className="col-sm-4 col-form-label">Stock:</label>
+                    <label htmlFor="quantity" className="col-sm-4 col-form-label text-light">Stock:</label>
                     <div className="col-sm-4">
-                        <label htmlFor="quantityb">Bultos:</label>
+                        <label htmlFor="quantityb" className="text-light">Bultos:</label>
                         <div className="input-group">
                             <button className="btn btn-success btn-sm" type="button" onClick={() => handleBultoChange('r')}><FaMinus /></button>
                             <input type="number" className="form-control text-center" id="quantityb" name="quantityb" ref={quantitybRef} placeholder="Ingrese Stock" onChange={handleChange} value={producto.quantityb} required />
@@ -475,7 +505,7 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                         </div>
                     </div>
                     <div className="col-sm-4">
-                        <label htmlFor="quantityu">Unidades:</label>
+                        <label htmlFor="quantityu" className="text-light">Unidades:</label>
                         <div className="input-group">
                             <button className="btn btn-success btn-sm" type="button" onClick={() => handleUnitChange('r')}><FaMinus /></button>
                             <input type="number" className="form-control text-center" id="quantityu" name="quantityu" ref={quantityuRef} placeholder="Ingrese Stock" onChange={handleChange} value={producto.quantityu} required />
@@ -484,16 +514,16 @@ const ABMProductos = ({ close, productid, productos, actualizarListaProductos })
                     </div>
                 </section>
                 {/* <section className="row mb-3"> */}
-                    {/* <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label> */}
-                    {/* <div className="col-sm-8"> */}
-                        {/* <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required /> */}
-                    {/* </div> */}
+                {/* <label htmlFor="date" className="col-sm-4 col-form-label">Fecha de Vencimiento:</label> */}
+                {/* <div className="col-sm-8"> */}
+                {/* <input type="date" className="form-control" id="date" name="date" ref={dateRef} placeholder="Ingrese Fecha de Vencimiento" onChange={handleChange} value={producto.date} required /> */}
+                {/* </div> */}
                 {/* </section> */}
                 {/* <section className="row mb-3"> */}
-                    {/* <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label> */}
-                    {/* <div className="col-sm-8"> */}
-                        {/* <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required /> */}
-                    {/* </div> */}
+                {/* <label htmlFor="idealstock" className="col-sm-4 col-form-label">Stock Ideal:</label> */}
+                {/* <div className="col-sm-8"> */}
+                {/* <input type="number" className="form-control" id="idealstock" name="idealstock" ref={idealstockRef} placeholder="Ingrese Stock Ideal" onChange={handleChange} value={producto.idealstock} required /> */}
+                {/* </div> */}
                 {/* </section> */}
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-success mt-4">{productid ? 'Editar' : 'Agregar'}</button>

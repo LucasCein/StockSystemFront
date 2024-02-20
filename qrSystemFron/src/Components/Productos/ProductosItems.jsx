@@ -13,7 +13,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
     const [prods, setProds] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-
+    const navigate=useNavigate()
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = currentPage * itemsPerPage;
     let currentItems = productos.slice(startIndex, endIndex);
@@ -221,9 +221,10 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
                         <div className="col-12 col-md-2 d-flex justify-content-md-end justify-content-center align-items-center gap-2 ">
                             <section>
-                                <Popup trigger={<div><BsPencilFill className="icon " cursor={"pointer"} /></div>} position="center center" modal>
+                                <section><BsPencilFill className="icon" cursor={"pointer"} onClick={()=>navigate("/abmProductos",{state:{productid}})} /></section>
+                                {/* <Popup trigger={<div><BsPencilFill className="icon " cursor={"pointer"} /></div>} position="center center" modal>
                                     {close => <ABMProductos productid={productid} close={close} actualizarListaProductos={actualizarListaProductos} productos={productos}></ABMProductos>}
-                                </Popup>
+                                </Popup> */}
                             </section>
                             <section>
                                 <BsPrinterFill className="icon " cursor={"pointer"} onClick={() => printImage(productid)} />
