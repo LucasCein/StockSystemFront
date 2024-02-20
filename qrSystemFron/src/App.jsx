@@ -69,7 +69,7 @@ function App() {
             path='/'
             element={<div><Login></Login></div>
             }
-          />
+          /> 
         </Routes>
       </BrowserRouter>
     </MyProvider>
