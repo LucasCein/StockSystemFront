@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
@@ -8,6 +8,7 @@ import Popup from "reactjs-popup";
 import { BsSearch } from "react-icons/bs";
 import ProdsSugs from "./ProdsSugs";
 import CustomSpinner from "../CustomSpinner/CustomSpinner";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 const ABMProductos = () => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -27,9 +28,21 @@ const ABMProductos = () => {
     const idealstockRef = useRef(null);
     const [idprod, setIdProd] = useState(0)
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const { userName, setUserName } = useContext(ProvRouteContext)
     const [isLoading, setIsLoading] = useState(true)
     const [aux, setAux] = useState("")
+    const [producto, setProducto] = useState({
+        name: '',
+        code: '',
+        quantityb: 0,
+        quantityu: 0,
+        date: new Date().toISOString().split('T')[0],
+        idealstock: 0,
+        codbarras: '',
+        codprov: '',
+        unxcaja: '',
+        username: [userName]
+    });
     useEffect(() => {
         if (productid == null) {
             setIsLoading(false)
@@ -49,32 +62,64 @@ const ABMProductos = () => {
             .then(data => setArticulos(data))
             .catch(error => console.error(error));
     }, [])
-    useEffect(() => {
-        fetch('https://stocksystemback-uorn.onrender.com/products')
-            .then(response => response.json())
-            .then(data => setProductos(data))
-            .catch(error => console.error(error));
-    }, [])
+    // useEffect(() => {
+    //     if (userName.includes('admin')) {
+
+    //         fetch('https://stocksystemback-uorn.onrender.com/products')
+    //             .then(response => response.json())
+    //             .then(data => setProductos(data))
+    //             .catch(error => console.error(error));
+
+    //     }
+    //     else {
+    //         fetch(`https://stocksystemback-uorn.onrender.com/products/${userName}`)
+    //             .then(response => response.json())
+    //             .then(data => setProductos(data))
+    //             .catch(error => console.error(error));
+    //     }
+    // }, [])
+    console.log(productid)
     useEffect(() => {
         setError("")
         if (productid) {
-            fetch(`https://stocksystemback-uorn.onrender.com/products/${idprod}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
-                    const fechaAjustada = data.date.split("T")[0];
-                    setProducto({
-                        ...data,
-                        date: fechaAjustada // Aquí aseguras que la fecha esté en el formato correcto
+            if (userName == 'admin') {
+                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${productid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('success', data)
+                        // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
+                        const fechaAjustada = data.date.split("T")[0];
+                        setProducto({
+                            ...data,
+                            date: fechaAjustada // Aquí aseguras que la fecha esté en el formato correcto
+                        });
+
+                    })
+                    .then(() => setIsLoading(false))
+                    .catch(error => {
+                        console.error(error);
                     });
-                })
-                .then(() => setIsLoading(false))
-                .catch(error => {
-                    console.error(error);
-                });
+            }
+            else {
+                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
+                        const fechaAjustada = data.date.split("T")[0];
+                        setProducto({
+                            ...data,
+                            date: fechaAjustada // Aquí aseguras que la fecha esté en el formato correcto
+                        });
+                    })
+                    .then(() => setIsLoading(false))
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+
         }
     }, [idprod]);
-    console.log(idprod)
+    console.log(producto)
     useEffect(() => {
         const input = quantitybRef.current;
         if (input) {
@@ -83,7 +128,7 @@ const ABMProductos = () => {
 
         }
     }, [quantitybRef]); // Dependencia: quantitybRef
-
+    console.log(userName)
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
         fetch('https://stocksystemback-uorn.onrender.com/products')
@@ -96,18 +141,7 @@ const ABMProductos = () => {
                 console.error(error);
             });
     };
-    const [producto, setProducto] = useState({
-        name: '',
-        code: '',
-        quantityb: 0,
-        quantityu: 0,
-        date: new Date().toISOString().split('T')[0],
-        idealstock: 0,
-        codbarras: '',
-        codprov: '',
-        unxcaja: '',
 
-    });
     const [error, setError] = useState(""); // Estado para manejar los mensajes de error
     console.log(articulos)
     const handleChange = (e) => {
@@ -234,6 +268,7 @@ const ABMProductos = () => {
     };
 
     function formatToDDMMYYYY(dateString) {
+        console.log(dateString)
         // Dividimos la cadena de fecha en sus componentes (año, mes, día)
         let dateParts = dateString.split('-');
 
@@ -264,6 +299,7 @@ const ABMProductos = () => {
         aux == 's' ? setProducto({ ...producto, quantityu: parseInt(producto.quantityu) + 1 }) : parseInt(producto.quantityu) > 0 && setProducto({ ...producto, quantityu: parseInt(producto.quantityu) - 1 });
     };
     console.log(producto)
+    console.log(productos)
     console.log(productid)
     console.log('error:', error)
     const handleSubmit = async (e) => {
@@ -276,47 +312,47 @@ const ABMProductos = () => {
             return;
         }
 
-        if (producto.quantityb == 0 && producto.quantityu == 0) {
-            try {
-                fetch(`https://stocksystemback-uorn.onrender.com/products/${productid}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            // Si el servidor responde con un error, lanzar una excepción
-                            return response.text().then(text => { throw new Error(text) });
-                        }
-                        const MySwal = withReactContent(Swal)
-                        console.log('entropa')
-                        MySwal.fire({
-                            title: <strong>Se ha eliminado con Exito!</strong>,
-                            icon: 'success',
-                            preConfirm: () => {
-                                actualizarListaProductos();
-                            }
-                        })
-                        // Si la respuesta es exitosa, actualizar la lista de productos
-                        // No necesitas parsear la respuesta como JSON si esperas texto plano
+        // if (producto.quantityb == 0 && producto.quantityu == 0) {
+        //     try {
+        //         fetch(`https://stocksystemback-uorn.onrender.com/products/${productid}`, {
+        //             method: 'DELETE',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         })
+        //             .then(response => {
+        //                 if (!response.ok) {
+        //                     // Si el servidor responde con un error, lanzar una excepción
+        //                     return response.text().then(text => { throw new Error(text) });
+        //                 }
+        //                 const MySwal = withReactContent(Swal)
+        //                 console.log('entropa')
+        //                 MySwal.fire({
+        //                     title: <strong>Se ha eliminado con Exito!</strong>,
+        //                     icon: 'success',
+        //                     preConfirm: () => {
+        //                         actualizarListaProductos();
+        //                     }
+        //                 })
+        //                 // Si la respuesta es exitosa, actualizar la lista de productos
+        //                 // No necesitas parsear la respuesta como JSON si esperas texto plano
 
-                    })
-                    .catch(error => {
-                        console.error('Error al eliminar el producto:', error);
-                        alert(error.message); // Muestra el mensaje de error
-                    });
-                close(); // Cerrar el modal o resetear el formulario como sea necesario
-            }
-            catch (err) {
-                console.log(error)
-            }
-        }
+        //             })
+        //             .catch(error => {
+        //                 console.error('Error al eliminar el producto:', error);
+        //                 alert(error.message); // Muestra el mensaje de error
+        //             });
+        //         close(); // Cerrar el modal o resetear el formulario como sea necesario
+        //     }
+        //     catch (err) {
+        //         console.log(error)
+        //     }
+        // }
         // Prevenir el comportamiento por defecto de envío del formulario
 
         // Verificar si todos los campos están llenos
 
-        else if (productid) {
+        if (productid) {
             // Si hay un ID, intenta hacer el PUT
 
             const total = (parseInt(producto.quantityb) * parseInt(producto.unxcaja)) + parseInt(producto.quantityu)
@@ -357,8 +393,8 @@ const ABMProductos = () => {
             }
         }
         //art.code == producto.code && formatToDDMMYYYY(art.date) == producto.date
-        else if (productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date)) != undefined) {
-            const productoExistente = productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date));
+        else if (productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date) && art.username.includes(userName)) != undefined) {
+            const productoExistente = productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date) && art.username.includes(userName));
             console.log(productoExistente)
             if (productoExistente) {
                 // Actualizar cantidades del producto existente
@@ -367,7 +403,6 @@ const ABMProductos = () => {
                     quantityb: productoExistente.quantityb + producto.quantityb,
                     quantityu: productoExistente.quantityu + producto.quantityu,
                     total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb)) * parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu) + parseInt(producto.quantityu))
-
                 };
                 try {
                     const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
@@ -407,7 +442,7 @@ const ABMProductos = () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu })
+                    body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu, username: [userName] })
 
                 });
 
@@ -461,7 +496,7 @@ const ABMProductos = () => {
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
                             <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
-                                {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
+                                {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close}  ></ProdsSugs>}
                             </Popup>
                         </div>
                         {/* {suggestions.length > 0 && (
@@ -483,7 +518,7 @@ const ABMProductos = () => {
                     <section className="row mb-3">
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Cod. Prov:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
-                            <input type="text" className="form-control" id="codProv" name="codprov" ref={codProvRef} placeholder="Cod. Prov." onChange={handleChangeBarras} value={producto.codprov} required />
+                            <input type="text" className="form-control" id="codProv" name="codprov" ref={codProvRef} placeholder="Cod. Prov." onChange={handleChangeBarras} value={producto.codprov} />
                             <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
                                 {close => <ProdsSugs name={"codprov"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
                             </Popup>

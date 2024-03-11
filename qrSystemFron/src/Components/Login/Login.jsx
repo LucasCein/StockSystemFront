@@ -8,7 +8,8 @@ const Login = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
-    const {userName,setUserName}=useContext(ProvRouteContext)
+    const {userName,setUserName,setUserId}=useContext(ProvRouteContext)
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -21,7 +22,7 @@ const Login = () => {
             });
 
             const responseData = await response.json();
-
+            setUserId(responseData.userid)
             if (response.ok) {
                 if (responseData.message === 'Login exitoso') {
                     setUserName(name)

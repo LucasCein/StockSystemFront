@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
-const ProdsSugs = ({ name, setProducto, producto,close }) => {
+const ProdsSugs = ({ name, setProducto, producto,close  }) => {
     const [articulos, setArticulos] = useState([]);
     const [paginaActual, setPaginaActual] = useState(0);
     const [suggestions, setSuggestions] = useState([]);

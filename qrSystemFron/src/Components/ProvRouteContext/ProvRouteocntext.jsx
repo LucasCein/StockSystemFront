@@ -4,8 +4,9 @@ export const MyProvider = ({ children }) => {
     const [value, setValue] = useState()
     const ref =useRef(value)
     const [userName, setUserName] = useState("")
+    const [userid, setUserId] = useState()
       return (
-          <ProvRouteContext.Provider value={{ref,setValue,userName,setUserName}}>
+          <ProvRouteContext.Provider value={{ref,setValue,userName,setUserName,userid,setUserId}}>
             {children}
           </ProvRouteContext.Provider>)
   }

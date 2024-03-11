@@ -18,27 +18,79 @@ const Productos = () => {
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
     const [orden, setOrden] = useState({ columna: 'date', direccion: 'asc' });
-    const navigate=useNavigate()
-    const {userName,setUserName}=useContext(ProvRouteContext)
+    const navigate = useNavigate()
+    const { userName, setUserName } = useContext(ProvRouteContext)
+    const [user, setUser] = useState(userName)
+    const [prodsAdmin, setProdsAdmin] = useState([])
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
-        fetch('https://stocksystemback-uorn.onrender.com/products')
+        if (user == 'admin') {
+            fetch('https://stocksystemback-uorn.onrender.com/products')
+                .then(response => response.json())
+                .then(data => {
+                    setProductos(data); // Esto establece los productos en tu estado o donde necesites.
+                    console.log('data', data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            fetch('https://stocksystemback-uorn.onrender.com/productos/admin')
             .then(response => response.json())
             .then(data => {
-                setProductos(data);
-                // Actualizar el estado con la nueva lista de productos
+                setProdsAdmin(data); // Esto establece los productos en tu estado o donde necesites.
+                console.log('data', data);
             })
             .catch(error => {
                 console.error(error);
             });
+        }
+
+
+        else {
+            fetch(`https://stocksystemback-uorn.onrender.com/products/${user}`)
+                .then(response => response.json())
+                .then(data => {
+                    setProductos(data);
+                    // Actualizar el estado con la nueva lista de productos
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     };
-    console.log(productos)
+    console.log(prodsAdmin)
     useEffect(() => {
-        actualizarListaProductos();
+        setUser(userName)
+        actualizarListaProductos()
+        
     }, []);
     console.log(userName)
-
+    useEffect(()=>{
+        console.log('prodadmin',prodsAdmin)
+        
+        if (user == 'admin') {
+            const prods=productos.filter((prod)=>{
+                return !prodsAdmin.includes(prod.id)
+            })
+            console.log('filteredprods',prods)
+            
+            fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(prods)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    },[prodsAdmin])
     const cambiarOrden = (columna) => {
         setOrden((ordenActual) => ({
             columna,
@@ -169,7 +221,7 @@ const Productos = () => {
         }
     };
     console.log(prodsFiltrados)
-    const productosOrdenados = ordenarProductos(prodsFiltrados.length > 0 ? prodsFiltrados : productos);
+    const productosOrdenados = ordenarProductos(user=='admin'? prodsAdmin:productos);
     return (
         // <section>
         //     <section>
@@ -237,8 +289,10 @@ const Productos = () => {
         //     </MDBListGroup>
         // </section>
         <section className="container-fluid p-3">
+            <section className="d-flex align-items-center justify-content-end ">
+                <button className="btn btn-danger" onClick={() => navigate('/')}>Salir</button>
+            </section>
             <h1 className="text-center text-light">Productos</h1>
-
             <section className="row">
                 <section className="col-12">
                     <h3 className="text-light">Filtros</h3>
@@ -270,14 +324,14 @@ const Productos = () => {
 
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3">
-                    <button className="btn btn-light me-3" onClick={()=>actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
+                    <button className="btn btn-light me-3" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary me-3"
                         onClick={() => exportToExcel(productosOrdenados, 'Productos')}
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>
-                    <button className="btn btn-success" style={{ marginRight: '10%' }} onClick={()=>navigate("/abmProductos")}>Agregar Nuevo</button>
+                    <button className="btn btn-success" style={{ marginRight: '10%' }} onClick={() => navigate("/abmProductos")}>Agregar Nuevo</button>
                     {/* <Popup trigger={<button className="btn btn-success" style={{ marginRight: '10%' }}>Agregar Nuevo</button>} modal position={'center center'}>
                         {close => <ABMProductos close={close} productos={productos} actualizarListaProductos={actualizarListaProductos}></ABMProductos>}
                     </Popup> */}
