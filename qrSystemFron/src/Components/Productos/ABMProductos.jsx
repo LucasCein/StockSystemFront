@@ -62,28 +62,28 @@ const ABMProductos = () => {
             .then(data => setArticulos(data))
             .catch(error => console.error(error));
     }, [])
-    // useEffect(() => {
-    //     if (userName.includes('admin')) {
+    useEffect(() => {
+        if (userName.includes('admin')) {
 
-    //         fetch('https://stocksystemback-uorn.onrender.com/products')
-    //             .then(response => response.json())
-    //             .then(data => setProductos(data))
-    //             .catch(error => console.error(error));
+            fetch('https://stocksystemback-uorn.onrender.com/productos/admin')
+                .then(response => response.json())
+                .then(data => setProductos(data))
+                .catch(error => console.error(error));
 
-    //     }
-    //     else {
-    //         fetch(`https://stocksystemback-uorn.onrender.com/products/${userName}`)
-    //             .then(response => response.json())
-    //             .then(data => setProductos(data))
-    //             .catch(error => console.error(error));
-    //     }
-    // }, [])
+        }
+        else {
+            fetch(`https://stocksystemback-uorn.onrender.com/products/${userName}`)
+                .then(response => response.json())
+                .then(data => setProductos(data))
+                .catch(error => console.error(error));
+        }
+    }, [])
     console.log(productid)
     useEffect(() => {
         setError("")
         if (productid) {
             if (userName == 'admin') {
-                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${productid}`)
+                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${idprod==0?productid:idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('success', data)
@@ -101,7 +101,7 @@ const ABMProductos = () => {
                     });
             }
             else {
-                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`)
+                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${idprod==0?productid:idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
@@ -354,43 +354,83 @@ const ABMProductos = () => {
 
         if (productid) {
             // Si hay un ID, intenta hacer el PUT
-
             const total = (parseInt(producto.quantityb) * parseInt(producto.unxcaja)) + parseInt(producto.quantityu)
-            try {
-                const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ...producto, total: total })
+            if (userName == 'admin') {
+                try {
+                    const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ...producto, total: total })
 
-                })
+                    })
 
-                if (!respuesta.ok) {
-                    throw new Error(`HTTP error! status: ${respuesta.status}`);
-                }
-                const MySwal = withReactContent(Swal);
-                MySwal.fire({
-                    title: <strong>Se ha actualizado con Éxito!</strong>,
-                    icon: 'success',
-                    timer: 3000, // La alerta se cerrará después de 3000 milisegundos (3 segundos)
-                    timerProgressBar: true,
-                    showConfirmButton: false, // Muestra una barra de progreso que indica cuánto tiempo queda
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer);
-                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    if (!respuesta.ok) {
+                        throw new Error(`HTTP error! status: ${respuesta.status}`);
                     }
-                });
+                    const MySwal = withReactContent(Swal);
+                    MySwal.fire({
+                        title: <strong>Se ha actualizado con Éxito!</strong>,
+                        icon: 'success',
+                        timer: 3000, // La alerta se cerrará después de 3000 milisegundos (3 segundos)
+                        timerProgressBar: true,
+                        showConfirmButton: false, // Muestra una barra de progreso que indica cuánto tiempo queda
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer);
+                            toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        }
+                    });
 
 
-                const resultado = await respuesta.json();
-                console.log('Producto actualizado con：', resultado);
-                navigateToNextProduct();
-                console.log(productid)
-            } catch (error) {
-                console.error('Error al actualizar el producto:', error);
-                setError(error.message);
+                    const resultado = await respuesta.json();
+                    console.log('Producto actualizado con：', resultado);
+                    navigateToNextProduct();
+                    console.log(productid)
+                } catch (error) {
+                    console.error('Error al actualizar el producto:', error);
+                    setError(error.message);
+                }
             }
+            else {
+
+                try {
+                    const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ...producto, total: total })
+
+                    })
+
+                    if (!respuesta.ok) {
+                        throw new Error(`HTTP error! status: ${respuesta.status}`);
+                    }
+                    const MySwal = withReactContent(Swal);
+                    MySwal.fire({
+                        title: <strong>Se ha actualizado con Éxito!</strong>,
+                        icon: 'success',
+                        timer: 3000, // La alerta se cerrará después de 3000 milisegundos (3 segundos)
+                        timerProgressBar: true,
+                        showConfirmButton: false, // Muestra una barra de progreso que indica cuánto tiempo queda
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer);
+                            toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        }
+                    });
+
+
+                    const resultado = await respuesta.json();
+                    console.log('Producto actualizado con：', resultado);
+                    navigateToNextProduct();
+                    console.log(productid)
+                } catch (error) {
+                    console.error('Error al actualizar el producto:', error);
+                    setError(error.message);
+                }
+            }
+
         }
         //art.code == producto.code && formatToDDMMYYYY(art.date) == producto.date
         else if (productos?.find(art => art.code == producto.code && formatToDDMMYYYY(art.date) == formatToDDMMYYYY(producto.date) && art.username.includes(userName)) != undefined) {
@@ -404,13 +444,76 @@ const ABMProductos = () => {
                     quantityu: productoExistente.quantityu + producto.quantityu,
                     total: ((parseInt(productoExistente.quantityb) + parseInt(producto.quantityb)) * parseInt(productoExistente.unxcaja)) + (parseInt(productoExistente.quantityu) + parseInt(producto.quantityu))
                 };
+                if (userName == 'admin') {
+                    try {
+                        const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(productoActualizado)
+                        });
+
+                        if (!respuesta.ok) {
+                            throw new Error(`HTTP error! status: ${respuesta.status}`);
+                        }
+                        const MySwal = withReactContent(Swal)
+                        MySwal.fire({
+                            title: <strong>Se ha agregado con Exito!</strong>,
+                            icon: 'success',
+                            preConfirm: () => {
+                                navigate("/productos")
+                            }
+                        })
+                        // Código para manejar la respuesta exitosa
+                    } catch (error) {
+                        console.error('Error al actualizar el producto:', error);
+                        setError(error.message);
+                    }
+                }
+                else {
+
+                    try {
+                        const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(productoActualizado)
+                        });
+
+                        if (!respuesta.ok) {
+                            throw new Error(`HTTP error! status: ${respuesta.status}`);
+                        }
+                        const MySwal = withReactContent(Swal)
+                        MySwal.fire({
+                            title: <strong>Se ha agregado con Exito!</strong>,
+                            icon: 'success',
+                            preConfirm: () => {
+                                navigate("/productos")
+                            }
+                        })
+                        // Código para manejar la respuesta exitosa
+                    } catch (error) {
+                        console.error('Error al actualizar el producto:', error);
+                        setError(error.message);
+                    }
+                }
+            }
+
+        }
+
+        else {
+
+            if (userName == 'admin') {
                 try {
-                    const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
-                        method: 'PUT',
+                    const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/productos/admin', {
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(productoActualizado)
+                        body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu, username: [userName] })
+
                     });
 
                     if (!respuesta.ok) {
@@ -424,45 +527,44 @@ const ABMProductos = () => {
                             navigate("/productos")
                         }
                     })
-                    // Código para manejar la respuesta exitosa
+                    const resultado = await respuesta.json();
+                    console.log('Producto agregado con éxito:', resultado);
+                    close(); // Cerrar el modal o resetear el formulario como sea necesario
                 } catch (error) {
-                    console.error('Error al actualizar el producto:', error);
+                    console.error('Error al agregar el producto:', error);
                     setError(error.message);
                 }
             }
+            else {
 
-        }
+                try {
+                    const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu, username: [userName] })
 
-        else {
+                    });
 
-
-            try {
-                const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/products', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ...producto, total: (producto.quantityb * producto.unxcaja) + producto.quantityu, username: [userName] })
-
-                });
-
-                if (!respuesta.ok) {
-                    throw new Error(`HTTP error! status: ${respuesta.status}`);
-                }
-                const MySwal = withReactContent(Swal)
-                MySwal.fire({
-                    title: <strong>Se ha agregado con Exito!</strong>,
-                    icon: 'success',
-                    preConfirm: () => {
-                        navigate("/productos")
+                    if (!respuesta.ok) {
+                        throw new Error(`HTTP error! status: ${respuesta.status}`);
                     }
-                })
-                const resultado = await respuesta.json();
-                console.log('Producto agregado con éxito:', resultado);
-                close(); // Cerrar el modal o resetear el formulario como sea necesario
-            } catch (error) {
-                console.error('Error al agregar el producto:', error);
-                setError(error.message);
+                    const MySwal = withReactContent(Swal)
+                    MySwal.fire({
+                        title: <strong>Se ha agregado con Exito!</strong>,
+                        icon: 'success',
+                        preConfirm: () => {
+                            navigate("/productos")
+                        }
+                    })
+                    const resultado = await respuesta.json();
+                    console.log('Producto agregado con éxito:', resultado);
+                    close(); // Cerrar el modal o resetear el formulario como sea necesario
+                } catch (error) {
+                    console.error('Error al agregar el producto:', error);
+                    setError(error.message);
+                }
             }
             // Si todo está correcto, intenta hacer el POST
 

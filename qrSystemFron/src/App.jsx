@@ -10,6 +10,7 @@ import Productos from './Components/Productos/Productos'
 import DetalleProducto from './Components/Productos/DetalleProducto'
 import Login from './Components/Login/Login'
 import ABMProductos from './Components/Productos/ABMProductos'
+import Historial from './Components/Historial/Historial'
 
 
 function App() {
@@ -55,6 +56,15 @@ function App() {
             path='/products/:productid'
             element={
               <DetalleProducto></DetalleProducto>
+            }
+          />
+          <Route
+            path='/historial'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <Historial></Historial>
+            </div>
             }
           />
           <Route

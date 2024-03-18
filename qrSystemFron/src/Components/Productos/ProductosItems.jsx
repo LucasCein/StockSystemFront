@@ -1,5 +1,5 @@
 import { MDBListGroupItem } from "mdb-react-ui-kit"
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BsEyeFill, BsTrash3Fill } from "react-icons/bs";
 import { NavLink, useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
@@ -9,11 +9,13 @@ import ABMProductos from "./ABMProductos";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import "./css/prodItems.css"
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 const ProductosItems = ({ productos, actualizarListaProductos }) => {
     const [prods, setProds] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
+    const { userName, setUserName } = useContext(ProvRouteContext)
     const itemsPerPage = 5;
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = currentPage * itemsPerPage;
     let currentItems = productos.slice(startIndex, endIndex);
@@ -31,11 +33,11 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
             setProds(productos)
         }
     }, [productos]);
-    
+
 
     const deleteProduct = (productid) => {
         const MySwal = withReactContent(Swal);
-    
+
         // Mostrar un modal de confirmación
         MySwal.fire({
             title: '¿Estás seguro?',
@@ -49,34 +51,63 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
-                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // Si el servidor responde con un error, lanzar una excepción
-                        throw new Error(response.statusText);
-                    }
-                    // Mostrar mensaje de éxito
-                    MySwal.fire(
-                        'Eliminado!',
-                        'El producto ha sido eliminado.',
-                        'success'
-                    );
-                    // Actualizar lista de productos
-                    actualizarListaProductos();
-                })
-                .catch(error => {
-                    console.error('Error al eliminar el producto:', error);
-                    Swal.fire('Error', error.message, 'error'); // Mostrar mensaje de error
-                });
+                if (userName == 'admin') {
+                    fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${productid}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                // Si el servidor responde con un error, lanzar una excepción
+                                throw new Error(response.statusText);
+                            }
+                            // Mostrar mensaje de éxito
+                            MySwal.fire(
+                                'Eliminado!',
+                                'El producto ha sido eliminado.',
+                                'success'
+                            );
+                            // Actualizar lista de productos
+                            actualizarListaProductos();
+                        })
+                        .catch(error => {
+                            console.error('Error al eliminar el producto:', error);
+                            Swal.fire('Error', error.message, 'error'); // Mostrar mensaje de error
+                        });
+                }
+                else {
+
+                    fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                // Si el servidor responde con un error, lanzar una excepción
+                                throw new Error(response.statusText);
+                            }
+                            // Mostrar mensaje de éxito
+                            MySwal.fire(
+                                'Eliminado!',
+                                'El producto ha sido eliminado.',
+                                'success'
+                            );
+                            // Actualizar lista de productos
+                            actualizarListaProductos();
+                        })
+                        .catch(error => {
+                            console.error('Error al eliminar el producto:', error);
+                            Swal.fire('Error', error.message, 'error'); // Mostrar mensaje de error
+                        });
+                }
             }
         });
     };
-    
+
 
     //rojo cuando esta vencido, amarillo 30 dias o menos, naranja 60 dias o menos y verde el resto
     const generateSquareColor = (productDate) => {
@@ -104,27 +135,27 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
     function formatToDDMMYYYY(dateString) {
         // Dividimos la cadena de fecha en sus componentes (año, mes, día)
         let dateParts = dateString.split('-');
-    
+
         // Convertimos los componentes en números enteros
         // Date interpreta los meses desde 0 (enero) hasta 11 (diciembre), por lo que restamos 1 al mes
         let year = parseInt(dateParts[0], 10);
         let month = parseInt(dateParts[1], 10) - 1;
         let day = parseInt(dateParts[2], 10);
-    
+
         // Creamos un objeto de fecha con los componentes
         let date = new Date(year, month, day);
-    
+
         // Obtenemos el día, mes y año del objeto de fecha
         // Asegurándonos de añadir un cero delante si es menor de 10
         let formattedDay = ('0' + date.getDate()).slice(-2);
         let formattedMonth = ('0' + (date.getMonth() + 1)).slice(-2);
         let formattedYear = date.getFullYear();
-    
+
         // Construimos la cadena con el formato DD/MM/YYYY
         return `${formattedDay}/${formattedMonth}/${formattedYear}`;
     }
-    
-    
+
+
     const getQR = async (productid) => {
         const response = await fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`);
         if (!response.ok) {
@@ -176,12 +207,12 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
     return (
         <div>
-            {currentItems.map(({ productid, name, code, date, quantityu, quantityb,codprov,codbarras, unxcaja, total }) => (
+            {currentItems.map(({ productid, name, code, date, quantityu, quantityb, codprov, codbarras, unxcaja, total }) => (
                 <MDBListGroupItem key={productid} className="container align-items-center justify-content-center" >
 
                     <div className="row w-100">
                         {/* <div className="col-12 col-md-2 d-flex justify-content-center "> */}
-                            {/* <div className="color-square" style={{ backgroundColor: generateSquareColor(date) }}></div> */}
+                        {/* <div className="color-square" style={{ backgroundColor: generateSquareColor(date) }}></div> */}
                         {/* </div> */}
                         <div className="col-12 col-md-2 d-flex justify-content-center align-items-center ">
                             <p className="mb-0 text-dark value">{name}</p>
@@ -196,7 +227,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                             <p className="mb-0 text-dark">{codbarras}</p>
                         </div>
                         {/* <div className="col-12 col-md-2 d-flex justify-content-center align-items-center  "> */}
-                            {/* <p className="mb-0 text-dark">{formatToDDMMYYYY(date)}</p> */}
+                        {/* <p className="mb-0 text-dark">{formatToDDMMYYYY(date)}</p> */}
                         {/* </div> */}
                         <div className="col-12 col-md-2 d-flex justify-content-center align-items-center  ">
                             <p className="mb-0 text-dark">{quantityu}</p>
@@ -221,14 +252,14 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
                         <div className="col-12 col-md-2 d-flex justify-content-md-end justify-content-center align-items-center gap-2 ">
                             <section>
-                                <section><BsPencilFill className="icon" cursor={"pointer"} onClick={()=>navigate("/abmProductos",{state:{productid}})} /></section>
+                                <section><BsPencilFill className="icon" cursor={"pointer"} onClick={() => navigate("/abmProductos", { state: { productid } })} /></section>
                                 {/* <Popup trigger={<div><BsPencilFill className="icon " cursor={"pointer"} /></div>} position="center center" modal>
                                     {close => <ABMProductos productid={productid} close={close} actualizarListaProductos={actualizarListaProductos} productos={productos}></ABMProductos>}
                                 </Popup> */}
                             </section>
-                            <section>
-                                <BsPrinterFill className="icon " cursor={"pointer"} onClick={() => printImage(productid)} />
-                            </section>
+                            {/* <section> */}
+                            {/* <BsPrinterFill className="icon " cursor={"pointer"} onClick={() => printImage(productid)} /> */}
+                            {/* </section> */}
                             <section>
                                 <BsTrash3Fill className="icon " cursor={"pointer"} onClick={() => deleteProduct(productid)} />
                             </section>

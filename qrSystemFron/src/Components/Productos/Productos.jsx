@@ -11,6 +11,9 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { useNavigate } from "react-router-dom";
 import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
+import { BsTrash3Fill } from "react-icons/bs";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -22,6 +25,7 @@ const Productos = () => {
     const { userName, setUserName } = useContext(ProvRouteContext)
     const [user, setUser] = useState(userName)
     const [prodsAdmin, setProdsAdmin] = useState([])
+    const [allProducts, setAllProducts] = useState([])
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
@@ -36,14 +40,15 @@ const Productos = () => {
                     console.error(error);
                 });
             fetch('https://stocksystemback-uorn.onrender.com/productos/admin')
-            .then(response => response.json())
-            .then(data => {
-                setProdsAdmin(data); // Esto establece los productos en tu estado o donde necesites.
-                console.log('data', data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    setProdsAdmin(data); // Esto establece los productos en tu estado o donde necesites.
+                    console.log('data', data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
         }
 
 
@@ -58,23 +63,38 @@ const Productos = () => {
                     console.error(error);
                 });
         }
+
     };
     console.log(prodsAdmin)
     useEffect(() => {
         setUser(userName)
         actualizarListaProductos()
-        
+        if (userName == 'admin') {
+            try {
+                fetch('https://stocksystemback-uorn.onrender.com/allproducts')
+                    .then(response => response.json())
+                    .then(data => {
+                        setAllProducts(data); // Esto establece los productos en tu estado o donde necesites.
+                        console.log('data', data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }, []);
     console.log(userName)
-    useEffect(()=>{
-        console.log('prodadmin',prodsAdmin)
-        
+    useEffect(() => {
+        console.log('prodadmin', prodsAdmin)
+
         if (user == 'admin') {
-            const prods=productos.filter((prod)=>{
+            const prods = productos.filter((prod) => {
                 return !prodsAdmin.includes(prod.id)
             })
-            console.log('filteredprods',prods)
-            
+            console.log('filteredprods', prods)
+
             fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
                 method: 'POST',
                 headers: {
@@ -90,7 +110,7 @@ const Productos = () => {
                     console.error('Error:', error);
                 });
         }
-    },[prodsAdmin])
+    }, [prodsAdmin])
     const cambiarOrden = (columna) => {
         setOrden((ordenActual) => ({
             columna,
@@ -164,6 +184,25 @@ const Productos = () => {
     }
 
     const exportToExcel = (apiData, fileName) => {
+        console.log('allproducts', allProducts)
+        try {
+            fetch(`https://stocksystemback-uorn.onrender.com/historial`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(allProducts)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        } catch (error) {
+            console.error('Error:', error);
+        }
         const productosAgrupados = agruparPorFamilia(apiData);
         const datosParaExcel = prepararDatosParaExcel(productosAgrupados);
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -220,8 +259,54 @@ const Productos = () => {
             setProdsFiltrados(productos);
         }
     };
+    const resetProds = async (user) => {
+        const MySwal = withReactContent(Swal);
+
+        // Mostrar un modal de confirmación
+        MySwal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, proceder con la eliminación
+
+                fetch(user=='admin'?`https://stocksystemback-uorn.onrender.com/productos/admin`:`https://stocksystemback-uorn.onrender.com/products`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Si el servidor responde con un error, lanzar una excepción
+                            throw new Error(response.statusText);
+                        }
+                        // Mostrar mensaje de éxito
+                        MySwal.fire(
+                            'Eliminado!',
+                            'Los productos han sido eliminados.',
+                            'success'
+                        );
+                        // Actualizar lista de productos
+                        actualizarListaProductos();
+                    })
+                    .catch(error => {
+                        console.error('Error al eliminar los productos:', error);
+                        Swal.fire('Error', error.message, 'error'); // Mostrar mensaje de error
+                    });
+
+            }
+        });
+    }
+
     console.log(prodsFiltrados)
-    const productosOrdenados = ordenarProductos(user=='admin'? prodsAdmin:productos);
+    const productosOrdenados = ordenarProductos(user == 'admin' ? prodsFiltrados.length > 0 ? prodsFiltrados : prodsAdmin : prodsFiltrados.length > 0 ? prodsFiltrados : productos);
     return (
         // <section>
         //     <section>
@@ -324,6 +409,8 @@ const Productos = () => {
 
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3">
+                    <button className="btn btn-danger me-3" onClick={()=>resetProds('user')}><span>Reset usuarios</span></button>
+                    <button className="btn btn-danger me-3 " onClick={()=>resetProds('admin')}><span>Reset admin</span></button>
                     <button className="btn btn-light me-3" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary me-3"
