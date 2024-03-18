@@ -1,28 +1,10 @@
-.responsive-table .label {
-    display: none;
+.value {
+    word-wrap: break-word;
+    hyphens: auto;
+    max-width: 100px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-right: 0;
+    padding-left: 0;
+    /* Ajusta esto según la anchura que desees */
 }
-@media screen and (max-width: 768px) {
-    .responsive-table .row {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 10px;
-        background-color: #f9f9f9;
-        padding: 10px;
-        border-radius: 10px;
-    }
-
-    .responsive-table .col {
-        margin: 5px 0;
-    }
-
-    .responsive-table .label {
-        font-weight: bold;
-        display: inline-block;
-    }
-
-    .responsive-table .value {
-        display: inline-block;
-        margin-left: 5px;
-    }
-}
-

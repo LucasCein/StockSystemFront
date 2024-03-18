@@ -276,7 +276,7 @@ const Productos = () => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
 
-                fetch(user=='admin'?`https://stocksystemback-uorn.onrender.com/productos/admin`:`https://stocksystemback-uorn.onrender.com/products`, {
+                fetch(user == 'admin' ? `https://stocksystemback-uorn.onrender.com/productos/admin` : `https://stocksystemback-uorn.onrender.com/products`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -408,63 +408,54 @@ const Productos = () => {
             </section>
 
             <MDBListGroup className="mt-3">
-                <section className="d-flex justify-content-end mb-3">
-                    <button className="btn btn-danger me-3" onClick={()=>resetProds('user')}><span>Reset usuarios</span></button>
-                    <button className="btn btn-danger me-3 " onClick={()=>resetProds('admin')}><span>Reset admin</span></button>
-                    <button className="btn btn-light me-3" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
+                <section className="d-flex justify-content-end mb-3 flex-wrap">
+                    <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')}><span>Reset usuarios</span></button>
+                    <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>
+                    <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
-                        className="btn btn-primary me-3"
+                        className="btn btn-primary btn-sm me-2 mb-2"
                         onClick={() => exportToExcel(productosOrdenados, 'Productos')}
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>
-                    <button className="btn btn-success" style={{ marginRight: '10%' }} onClick={() => navigate("/abmProductos")}>Agregar Nuevo</button>
-                    {/* <Popup trigger={<button className="btn btn-success" style={{ marginRight: '10%' }}>Agregar Nuevo</button>} modal position={'center center'}>
-                        {close => <ABMProductos close={close} productos={productos} actualizarListaProductos={actualizarListaProductos}></ABMProductos>}
-                    </Popup> */}
+                    <button className="btn btn-success btn-sm me-2 mb-2" onClick={() => navigate("/abmProductos")}>Agregar Nuevo</button>
                 </section>
 
                 <section className="container pt-1 rounded d-flex align-items-center justify-content-center bg-black">
                     <section className="row w-100">
-                        {/* <section className="col-12 col-md d-flex justify-content-center"> */}
-                        {/* </section> */}
-
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('name')}>Nombre</p>
+                        <section className="col d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-block" onClick={() => cambiarOrden('name')}>Nombre</p>
                         </section>
 
-
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Interno</p>
+                        {/* Ocultar en móviles */}
+                        <section className="col d-flex justify-content-center d-none d-md-flex">
+                            <p className="fw-bold text-light mb-0 cursor-pointer" onClick={() => cambiarOrden('code')}>Cod. Interno</p>
+                        </section>
+                        <section className="col d-flex justify-content-center d-none d-md-flex">
+                            <p className="fw-bold text-light mb-0 cursor-pointer" onClick={() => cambiarOrden('code')}>Cod. Proveedor</p>
+                        </section>
+                        <section className="col d-flex justify-content-center d-none d-md-flex">
+                            <p className="fw-bold text-light mb-0 cursor-pointer" onClick={() => cambiarOrden('code')}>Cod. Barras</p>
                         </section>
 
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Proveedor</p>
-                        </section>
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Barras</p>
-                        </section>
-                        {/* <section className="col-12 col-md d-flex justify-content-center"> */}
-                        {/* <p className="fw-bold text-light mb-0 cursor-pointer d-none d-md-block" onClick={() => cambiarOrden('date')}>Fecha Venc</p> */}
-                        {/* </section> */}
-                        {/*  */}
-
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('quantityu')}>Cant Unid.</p>
+                        <section className="col d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-block" onClick={() => cambiarOrden('quantityu')}>Cant Unid.</p>
                         </section>
 
+                        <section className="col d-flex justify-content-center">
+                            <p className="fw-bold text-light mb-0 cursor-pointer d-block" onClick={() => cambiarOrden('quantityb')}>Cant Bulto</p>
+                        </section>
 
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('quantityb')}>Cant Bulto</p>
+                        {/* Ocultar en móviles */}
+                        <section className="col d-flex justify-content-center d-none d-md-flex">
+                            <p className="fw-bold text-light mb-0 cursor-pointer">Cant. x Caja</p>
                         </section>
-                        <section className=" col d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" >Cant. x Caja</p>
+                        <section className="col-md d-flex justify-content-center d-none d-md-flex">
+                            <p className="fw-bold text-light mb-0 cursor-pointer">Total</p>
                         </section>
-                        <section className=" col-md d-flex justify-content-center">
-                            <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" >Total</p>
-                        </section>
-                        <section className=" col d-flex justify-content-center ">
-                            <p className="fw-bold text-light mb-0  d-md-block">Acciones</p>
+
+                        <section className="col d-flex justify-content-center ">
+                            <p className="fw-bold text-light mb-0 d-block">Acciones</p>
                         </section>
                     </section>
                 </section>

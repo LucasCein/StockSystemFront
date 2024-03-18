@@ -8,7 +8,7 @@ import { BsPencilFill } from "react-icons/bs";
 import ABMProductos from "./ABMProductos";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import "./css/prodItems.css"
+import './css/prodItems.css'
 import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 const ProductosItems = ({ productos, actualizarListaProductos }) => {
     const [prods, setProds] = useState([])
@@ -208,65 +208,54 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
     return (
         <div>
             {currentItems.map(({ productid, name, code, date, quantityu, quantityb, codprov, codbarras, unxcaja, total }) => (
-                <MDBListGroupItem key={productid} className="container align-items-center justify-content-center" >
-
+                <MDBListGroupItem key={productid} className="container align-items-center justify-content-center">
                     <div className="row w-100">
-                        {/* <div className=" col-md-2 d-flex justify-content-center "> */}
-                        {/* <div className="color-square" style={{ backgroundColor: generateSquareColor(date) }}></div> */}
-                        {/* </div> */}
-                        <div className=" col-md-2 d-flex justify-content-center align-items-center ">
+                        {/* Nombre - siempre visible */}
+                        <div className="col-5 col-md-2 d-flex justify-content-md-center align-items-center">
                             <p className="mb-0 text-dark value">{name}</p>
                         </div>
-                        <div className=" col-md-1 d-flex justify-content-center align-items-center  ">
+
+                        {/* Código, Cod. Proveedor, y Cod. Barras - ocultos en móviles */}
+                        <div className="col-md-1 d-none d-md-flex justify-content-center align-items-center">
                             <p className="mb-0 text-dark">{code}</p>
                         </div>
-                        <div className=" col-md-1 d-flex justify-content-center align-items-center  ">
+                        <div className="col-md-1 d-none d-md-flex justify-content-center align-items-center">
                             <p className="mb-0 text-dark">{codprov}</p>
                         </div>
-                        <div className=" col-md-1 d-flex justify-content-center align-items-center  ">
+                        <div className="col-md-1 d-none d-md-flex justify-content-center align-items-center">
                             <p className="mb-0 text-dark">{codbarras}</p>
                         </div>
-                        {/* <div className=" col-md-2 d-flex justify-content-center align-items-center  "> */}
-                        {/* <p className="mb-0 text-dark">{formatToDDMMYYYY(date)}</p> */}
-                        {/* </div> */}
-                        <div className=" col-md-2 d-flex justify-content-center align-items-center  ">
+
+                        {/* Cant Unid. - visible */}
+                        <div className="col-2 col-md-2 d-flex justify-content-md-center align-items-center">
                             <p className="mb-0 text-dark">{quantityu}</p>
                         </div>
-                        <div className=" col-md-1 d-flex justify-content-center align-items-center  ">
+
+                        {/* Cant Bulto - visible */}
+                        <div className="col-2 col-md-1 d-flex justify-content-center align-items-center">
                             <p className="mb-0 text-dark">{quantityb}</p>
                         </div>
-                        {/* cant x caja */}
-                        <div className=" col-md-1 d-flex justify-content-md-end justify-content-center align-items-center  ">
+
+                        {/* Cant. x Caja y Total - ocultos en móviles */}
+                        <div className="col-md-1 d-none d-md-flex justify-content-md-end justify-content-center align-items-center">
                             <p className="mb-0 text-dark">{unxcaja}</p>
                         </div>
-                        {/* total */}
-                        <div className=" col-md-1 d-flex justify-content-md-end justify-content-center align-items-center  ">
-                            <p className="mb-0 text-dark ">{total}</p>
+                        <div className="col-md-1 d-none d-md-flex justify-content-md-end justify-content-center align-items-center">
+                            <p className="mb-0 text-dark">{total}</p>
                         </div>
-                        {/* <div className="col d-flex justify-content-center align-items-center  ">
-                            <p className="mb-0 text-dark">{idealstock}</p>
-                        </div>
-                        <div className="col d-flex justify-content-center align-items-center  ">
-                            <p className="mb-0 text-dark">{missingstock}</p>
-                        </div> */}
 
-                        <div className=" col-md-2 d-flex justify-content-md-end justify-content-center align-items-center gap-2 ">
+                        {/* Acciones - siempre visible, ajustando el espacio disponible */}
+                        <div className="col-3 col-md-2 d-flex justify-content-end justify-content-md-end align-items-center gap-2">
                             <section>
-                                <section><BsPencilFill className="icon" cursor={"pointer"} onClick={() => navigate("/abmProductos", { state: { productid } })} /></section>
-                                {/* <Popup trigger={<div><BsPencilFill className="icon " cursor={"pointer"} /></div>} position="center center" modal>
-                                    {close => <ABMProductos productid={productid} close={close} actualizarListaProductos={actualizarListaProductos} productos={productos}></ABMProductos>}
-                                </Popup> */}
+                                <BsPencilFill className="icon" cursor={"pointer"} onClick={() => navigate("/abmProductos", { state: { productid } })} />
                             </section>
-                            {/* <section> */}
-                            {/* <BsPrinterFill className="icon " cursor={"pointer"} onClick={() => printImage(productid)} /> */}
-                            {/* </section> */}
                             <section>
                                 <BsTrash3Fill className="icon " cursor={"pointer"} onClick={() => deleteProduct(productid)} />
                             </section>
                         </div>
                     </div>
-
                 </MDBListGroupItem>
+
             ))}
             <section className="d-flex justify-content-center align-items-center mt-3">
 
