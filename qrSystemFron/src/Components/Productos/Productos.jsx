@@ -424,24 +424,24 @@ const Productos = () => {
                     </Popup> */}
                 </section>
 
-                <section className="container pt-1 rounded d-md-flex align-items-center justify-content-center bg-black">
+                <section className="container pt-1 rounded d-flex align-items-center justify-content-center bg-black">
                     <section className="row w-100">
                         {/* <section className="col-12 col-md d-flex justify-content-center"> */}
                         {/* </section> */}
 
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('name')}>Nombre</p>
                         </section>
 
 
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Interno</p>
                         </section>
 
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Proveedor</p>
                         </section>
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('code')}>Cod. Barras</p>
                         </section>
                         {/* <section className="col-12 col-md d-flex justify-content-center"> */}
@@ -449,21 +449,21 @@ const Productos = () => {
                         {/* </section> */}
                         {/*  */}
 
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('quantityu')}>Cant Unid.</p>
                         </section>
 
 
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" onClick={() => cambiarOrden('quantityb')}>Cant Bulto</p>
                         </section>
-                        <section className=" col-md d-flex justify-content-center">
+                        <section className=" col d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" >Cant. x Caja</p>
                         </section>
                         <section className=" col-md d-flex justify-content-center">
                             <p className="fw-bold text-light mb-0 cursor-pointer  d-md-block" >Total</p>
                         </section>
-                        <section className=" col-md d-flex justify-content-center ">
+                        <section className=" col d-flex justify-content-center ">
                             <p className="fw-bold text-light mb-0  d-md-block">Acciones</p>
                         </section>
                     </section>
