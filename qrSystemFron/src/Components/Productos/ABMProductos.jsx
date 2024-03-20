@@ -626,7 +626,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Codigo:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto' }}>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto', height: isMobile ? '70%' : 'auto' }}>
                                 {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close}  ></ProdsSugs>}
                             </Popup>
                         </div>
