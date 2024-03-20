@@ -5,7 +5,16 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
     const [articulos, setArticulos] = useState([]);
     const [paginaActual, setPaginaActual] = useState(0);
     const [suggestions, setSuggestions] = useState([]);
-    const articulosPorPagina = 5;
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    const articulosPorPagina = isMobile ? 2 : 5;
     useEffect(() => {
         fetch('https://stocksystemback-uorn.onrender.com/products/suggest')
             .then(response => response.json())
