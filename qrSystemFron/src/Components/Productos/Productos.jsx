@@ -408,13 +408,13 @@ const Productos = () => {
             </section>
 
             <MDBListGroup className="mt-3">
-                <section className="d-flex justify-content-end mb-3 flex-wrap">
+                <section className="d-flex justify-content-end mb-3 flex-wrap " style={{ marginRight: '9%' }}>
                     <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')}><span>Reset usuarios</span></button>
                     <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>
                     <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary btn-sm me-2 mb-2"
-                        onClick={() => exportToExcel(productosOrdenados, 'Productos')}
+                        onClick={() => exportToExcel(prodsAdmin, 'Productos')}
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>

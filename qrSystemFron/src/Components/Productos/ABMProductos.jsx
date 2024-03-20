@@ -43,6 +43,15 @@ const ABMProductos = () => {
         unxcaja: '',
         username: [userName]
     });
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     useEffect(() => {
         if (productid == null) {
             setIsLoading(false)
@@ -83,7 +92,7 @@ const ABMProductos = () => {
         setError("")
         if (productid) {
             if (userName == 'admin') {
-                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${idprod==0?productid:idprod}`)
+                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${idprod == 0 ? productid : idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('success', data)
@@ -101,7 +110,7 @@ const ABMProductos = () => {
                     });
             }
             else {
-                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${idprod==0?productid:idprod}`)
+                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${idprod == 0 ? productid : idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
@@ -582,6 +591,7 @@ const ABMProductos = () => {
         setIsSubmitting(false)
     }
     console.log('llego prod', producto)
+
     return (
         isLoading ? <CustomSpinner /> :
             <section>
@@ -597,7 +607,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Codigo:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto'}}>
                                 {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close}  ></ProdsSugs>}
                             </Popup>
                         </div>
@@ -621,7 +631,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Cod. Prov:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="codProv" name="codprov" ref={codProvRef} placeholder="Cod. Prov." onChange={handleChangeBarras} value={producto.codprov} />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{width: isMobile ? '90%' : 'auto'}}>
                                 {close => <ProdsSugs name={"codprov"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
                             </Popup>
                         </div>
@@ -645,7 +655,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Nombre:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="name" name="name" ref={nameRef} placeholder="Nombre" onChange={handleChange} value={producto.name} required />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{width: isMobile ? '90%' : 'auto'}}>
                                 {close => <ProdsSugs name={"descripcion"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
                             </Popup>
                         </div>
