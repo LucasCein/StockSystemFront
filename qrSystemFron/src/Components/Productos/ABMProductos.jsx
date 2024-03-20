@@ -200,16 +200,30 @@ const ABMProductos = () => {
     };
 
     const handleChangeBarras = (e) => {
-        const { name, value } = e.target
-        if (value && name == 'codprov') {
-            setSuggestions(articulos.filter((art) => art[name].toLowerCase().includes(value.toLowerCase())));
-        } else {
-            setSuggestions([]);
+
+        const { name, value } = e.target;
+
+        // Actualiza el input de codbarras conforme el usuario escribe
+        let newState = { ...producto, [name]: value };
+
+        // Busca un producto solo si el valor ingresado corresponde completamente a un código de barras existente
+        const prod = articulos.find(art => art[name] === value);
+        if (prod) {
+            newState = {
+                ...newState,
+                code: prod.code,
+                name: prod.descripcion,
+                codbarras: prod.codbarras,
+                codprov: prod.codprov,
+                unxcaja: prod.unxcaja,
+                familia: prod.familia
+            };
         }
-        setProducto({ ...producto, code: prod.code, name: prod.descripcion, codbarras: prod.codbarras, codprov: prod.codprov, unxcaja: prod.unxcaja, familia: prod.familia })
-        const prod = articulos.find(art => art[name] == value)
-        setProducto({ ...producto, code: prod.code, name: prod.descripcion, codbarras: prod.codbarras, codprov: prod.codprov, unxcaja: prod.unxcaja, familia: prod.familia })
-    }
+
+        // Actualiza el estado con el nuevo objeto, ya sea solo con el código de barras actualizado o con el producto completo si hubo coincidencia
+        setProducto(newState);
+    };
+
     console.log(productos)
 
     const navigateToNextProduct = () => {
@@ -224,9 +238,14 @@ const ABMProductos = () => {
 
     }
     const handleKeyDown = (e) => {
-        if (e.key === "Enter" && document.activeElement === codBarrasRef.current) {
-            e.preventDefault(); // Prevenir el envío del formulario
-            // Aquí puedes agregar lógica adicional si necesitas hacer algo después de leer el código de barras
+        if (e.key === "Enter") {
+            // Chequea si el elemento activo es el input del código de barras
+            if (document.activeElement === codBarrasRef.current) {
+                e.preventDefault(); // Previene el comportamiento por defecto (envío del formulario)
+                // Lógica adicional, si es necesario, después de capturar el código de barras
+                return; // Salir de la función para evitar que se ejecute el resto del código destinado a otras teclas
+            }
+            // Aquí puedes agregar lógica adicional para manejar el "Enter" en otros inputs
         }
         const currentActive = document.activeElement;
         switch (e.key) {
@@ -607,7 +626,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Codigo:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="code" name="code" ref={codeRef} placeholder="Codigo" onChange={handleChange} value={producto.code} required />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto'}}>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto' }}>
                                 {close => <ProdsSugs name={"code"} prods={suggestions} setProducto={setProducto} producto={producto} close={close}  ></ProdsSugs>}
                             </Popup>
                         </div>
@@ -631,7 +650,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Cod. Prov:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="codProv" name="codprov" ref={codProvRef} placeholder="Cod. Prov." onChange={handleChangeBarras} value={producto.codprov} />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{width: isMobile ? '90%' : 'auto'}}>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto' }}>
                                 {close => <ProdsSugs name={"codprov"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
                             </Popup>
                         </div>
@@ -655,7 +674,7 @@ const ABMProductos = () => {
                         <label htmlFor="name" className="col-sm-4 col-form-label text-light">Nombre:</label>
                         <div className="col-sm-8 d-flex justify-content-center  align-items-center gap-2">
                             <input type="text" className="form-control" id="name" name="name" ref={nameRef} placeholder="Nombre" onChange={handleChange} value={producto.name} required />
-                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{width: isMobile ? '90%' : 'auto'}}>
+                            <Popup trigger={<button className="btn btn-success"><BsSearch /></button>} modal contentStyle={{ width: isMobile ? '90%' : 'auto' }}>
                                 {close => <ProdsSugs name={"descripcion"} prods={suggestions} setProducto={setProducto} producto={producto} close={close} ></ProdsSugs>}
                             </Popup>
                         </div>
