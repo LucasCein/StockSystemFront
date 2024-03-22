@@ -31,16 +31,35 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
         }
         close()
     }
+    // const inputChange = (e) => {
+    //     const { value } = e.target
+    //     console.log('value', value)
+    //     if (name == 'descripcion' || name == 'codprov') {
+    //         setSuggestions(articulos.filter((art) => art[name].toLowerCase().includes(value.toLowerCase())));
+    //     } else {
+    //         setSuggestions(articulos.filter((art) => art[name].includes(value.toLowerCase())));
+    //     }
+    //     setPaginaActual(0);
+    // }
+
     const inputChange = (e) => {
-        const { value } = e.target
-        console.log('value', value)
-        if (name == 'descripcion' || name == 'codprov') {
-            setSuggestions(articulos.filter((art) => art[name].toLowerCase().includes(value.toLowerCase())));
-        } else {
-            setSuggestions(articulos.filter((art) => art[name].includes(value.toLowerCase())));
-        }
-        setPaginaActual(0);
+        
+        const value = e.target.value.toLowerCase(); // Convertir el valor de entrada a minúsculas para la comparación
+        const palabrasClave = value.split(' ').filter(palabra => palabra.trim() !== ''); // Dividir la entrada en palabras clave y eliminar espacios vacíos
+    
+        // Filtrar los artículos que contienen todas las palabras clave
+        const articulosFiltrados = articulos.filter((articulo) => {
+            // Convertir la descripción (o el campo relevante) a minúsculas para la comparación
+            const descripcion = articulo[name].toLowerCase();
+            // Verificar que todas las palabras clave estén contenidas en la descripción
+            return palabrasClave.every(palabraClave => descripcion.includes(palabraClave));
+        });
+    
+        setSuggestions(articulosFiltrados);
+        setPaginaActual(0); // Restablecer a la primera página de resultados
     }
+    
+
     // Calcula el número total de páginas
     const totalPaginas = Math.ceil(suggestions.length / articulosPorPagina);
     // Obtiene los artículos para la página actual
@@ -67,7 +86,7 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
                 <input type="text" id="searchInput" className="form-control" onChange={(e) => inputChange(e)} />
             </section>
             <div className="row justify-content-center mt-3">
-                <div className="col-12 col-md-8 col-lg-6">
+                <div className="col-12 col-md-8 col-lg-9">
                     <div className="table-responsive">
                         <table className="table">
                             <thead>

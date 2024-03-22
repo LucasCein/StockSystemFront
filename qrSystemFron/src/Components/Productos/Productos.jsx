@@ -414,7 +414,7 @@ const Productos = () => {
                     <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary btn-sm me-2 mb-2"
-                        onClick={() => exportToExcel(prodsAdmin, 'Productos')}
+                        onClick={() => exportToExcel(userName=='admin' ? prodsAdmin : productos, 'Productos')}
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>
