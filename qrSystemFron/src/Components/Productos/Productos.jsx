@@ -14,6 +14,8 @@ import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 import { BsTrash3Fill } from "react-icons/bs";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import Button from '@mui/material/Button';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -26,6 +28,8 @@ const Productos = () => {
     const [user, setUser] = useState(userName)
     const [prodsAdmin, setProdsAdmin] = useState([])
     const [allProducts, setAllProducts] = useState([])
+    const [stockExcel, setStockExcel] = useState([])
+    const [fileName, setFileName] = useState('')
     // Función para actualizar la lista de productos
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
@@ -155,15 +159,20 @@ const Productos = () => {
         for (const familia in productosAgrupados) {
             productosAgrupados[familia].forEach(item => {
                 datosExcel.push({
-                    'Codigo': item.code,
+                    'Artículo': item.code,
                     'EAN': item.codbarras,
-                    'Descripcion': item.name,
+                    'Descripción': item.name,
                     'Familia': item.familia,
-                    'Cod Proveedor': item.codprov,
-                    'Cantidad Unid.': item.quantityu,
-                    'Cantidad Bulto': item.quantityb,
-                    'Unid. x Caja': item.unxcaja,
-                    'Total': item.total,
+                    'Caja por': item.unxcaja,
+                    'DEPOSITO HIPERMAYORISTA SALTA': stockExcel.find(
+                        stock => stock.code === item.code
+                    )?.stockdep ?? 0,
+                    'bultos': item.quantityb,
+                    'unidades': item.quantityu,
+                    'total': item.total,
+                    'diferencia': item.total - (stockExcel.find(
+                        stock => stock.code === item.code
+                    )?.stockdep ?? 0)
                 });
             });
         }
@@ -304,7 +313,95 @@ const Productos = () => {
             }
         });
     }
+    const handleFileSelect = (event) => {
+        const files = event.target.files;
+        if (files && files[0]) {
+            const file = files[0];
+            setFileName(file.name);
 
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    if (!worksheet) throw new Error('No se encontró la hoja de cálculo');
+
+                    const dataForServer = XLSX.utils.sheet_to_json(worksheet);
+                    const requiredFields = ['Artículo', 'Caja por', 'DEPOSITO HIPERMAYORISTA SALTA', 'Descripción', 'EAN', 'Marca'];
+
+                    const isRowValid = (row) => requiredFields.every(field => row.hasOwnProperty(field));
+                    const modifiedData = dataForServer
+                        .filter(isRowValid)
+                        .map(row => ({
+                            code: row['Artículo'],
+                            unxcaja: row['Caja por'],
+                            stockdep: row['DEPOSITO HIPERMAYORISTA SALTA'],
+                            descripcion: row['Descripción'],
+                            codbarras: row['EAN'],
+                            marca: row['Marca'],
+                        }));
+
+                    sendDataToServer(modifiedData);
+                } catch (error) {
+                    console.error('Error al procesar el archivo:', error);
+                    // Manejar el error adecuadamente en tu UI
+                }
+            };
+
+            reader.onerror = (error) => {
+                console.error('Error al leer el archivo:', error);
+                // Manejar el error adecuadamente en tu UI
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+    };
+
+    const getExcelStock = () => {
+
+        fetch(`https://stocksystemback-uorn.onrender.com/excelstock`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                setStockExcel(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    // Simulación de envío de datos al servidor
+    function sendDataToServer(data) {
+        console.log(data)
+        try {
+            fetch(`https://stocksystemback-uorn.onrender.com/excelstock`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .then(() => {
+                    getExcelStock();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        console.log("Datos enviados al servidor:", data);
+        // Aquí implementarías la lógica para enviar los datos al servidor
+    }
     console.log(prodsFiltrados)
     const productosOrdenados = ordenarProductos(user == 'admin' ? prodsFiltrados.length > 0 ? prodsFiltrados : prodsAdmin : prodsFiltrados.length > 0 ? prodsFiltrados : productos);
     return (
@@ -374,7 +471,22 @@ const Productos = () => {
         //     </MDBListGroup>
         // </section>
         <section className="container-fluid p-3">
-            <section className="d-flex align-items-center justify-content-end ">
+            <section className="d-flex align-items-center justify-content-between">
+            <div className="me-5">
+                        <input
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style={{ display: 'none' }}
+                            id="raised-button-file"
+                            multiple
+                            type="file"
+                            onChange={handleFileSelect}
+                        />
+                        <label htmlFor="raised-button-file">
+                            <Button variant="contained" component="span" startIcon={<CloudUploadIcon />}>
+                                {fileName}
+                            </Button>
+                        </label>
+                    </div>
                 <button className="btn btn-danger" onClick={() => navigate('/')}>Salir</button>
             </section>
             <h1 className="text-center text-light">Productos</h1>
@@ -409,12 +521,13 @@ const Productos = () => {
 
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3 flex-wrap " style={{ marginRight: '9%' }}>
-                    {userName=='admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')} ><span>Reset usuarios</span></button>}
-                    {userName=='admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>}
+                    
+                    {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')} ><span>Reset usuarios</span></button>}
+                    {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>}
                     <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
                         className="btn btn-primary btn-sm me-2 mb-2"
-                        onClick={() => exportToExcel(userName=='admin' ? prodsAdmin : productos, 'Productos')}
+                        onClick={() => exportToExcel(userName == 'admin' ? prodsAdmin : productos, 'Productos')}
                     >
                         <i className="fa fa-file-excel-o"></i> Descargar Excel
                     </button>
