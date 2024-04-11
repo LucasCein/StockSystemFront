@@ -143,26 +143,26 @@ const Productos = () => {
         // Construimos la cadena con el formato DD/MM/YYYY
         return `${formattedDay}/${formattedMonth}/${formattedYear}`;
     }
-
+    // Agrupar los productos por marca
     const agruparPorFamilia = (productos) => {
         return productos.reduce((acc, producto) => {
             // Asumiendo que cada producto tiene una propiedad 'familia'
-            if (!acc[producto.familia]) {
-                acc[producto.familia] = [];
+            if (!acc[producto.marca]) {
+                acc[producto.marca] = [];
             }
-            acc[producto.familia].push(producto);
+            acc[producto.marca].push(producto);
             return acc;
         }, {});
     };
     const prepararDatosParaExcel = (productosAgrupados) => {
         const datosExcel = [];
-        for (const familia in productosAgrupados) {
-            productosAgrupados[familia].forEach(item => {
+        for (const prod in productosAgrupados) {
+            productosAgrupados[prod].forEach(item => {
                 datosExcel.push({
                     'Artículo': item.code,
                     'EAN': item.codbarras,
                     'Descripción': item.name,
-                    'Familia': item.familia,
+                    'Marca': item.marca,
                     'Caja por': item.unxcaja,
                     'DEPOSITO HIPERMAYORISTA SALTA': stockExcel.find(
                         stock => stock.code === item.code

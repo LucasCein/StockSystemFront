@@ -216,7 +216,8 @@ const ABMProductos = () => {
                 codbarras: prod.codbarras,
                 codprov: prod.codprov,
                 unxcaja: prod.unxcaja,
-                familia: prod.familia
+                familia: prod.familia,
+                marca: prod.marca
             };
         }
 

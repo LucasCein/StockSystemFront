@@ -24,10 +24,10 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
     const selectArt = (art) => {
         console.log(art)
         if (name == 'name') {
-            setProducto({ ...producto, name: art.descripcion.toLowerCase(), code: art.code, codbarras: art.codbarras, codprov: art.codprov, unxcaja: art.unxcaja, familia: art.familia })
+            setProducto({ ...producto, name: art.descripcion.toLowerCase(), code: art.code, codbarras: art.codbarras, codprov: art.codprov, unxcaja: art.unxcaja, familia: art.familia, marca: art.marca })
         }
         else {
-            setProducto({ ...producto, name: art.descripcion.toLowerCase(), code: art.code, codbarras: art.codbarras, codprov: art.codprov, unxcaja: art.unxcaja, familia: art.familia })
+            setProducto({ ...producto, name: art.descripcion.toLowerCase(), code: art.code, codbarras: art.codbarras, codprov: art.codprov, unxcaja: art.unxcaja, familia: art.familia, marca: art.marca })
         }
         close()
     }
