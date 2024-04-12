@@ -154,6 +154,21 @@ const Productos = () => {
             return acc;
         }, {});
     };
+    function formatoNumero(numero) {
+        // Verificar si el número es negativo
+        if (numero < 0) {
+            // Convertir el número a positivo y luego a string para añadir los paréntesis
+            return '(' + (-numero) + ')';
+        } else {
+            // Si el número no es negativo, simplemente devolverlo como string
+            return numero.toString();
+        }
+    }
+
+    // Ejemplo de uso
+    console.log(formatoNumero(-123));  // Imprime "(123)"
+    console.log(formatoNumero(456));   // Imprime "456"
+
     const prepararDatosParaExcel = (productosAgrupados) => {
         const datosExcel = [];
         for (const prod in productosAgrupados) {
@@ -170,9 +185,9 @@ const Productos = () => {
                     'bultos': item.quantityb,
                     'unidades': item.quantityu,
                     'total': item.total,
-                    'diferencia': item.total - (stockExcel.find(
+                    'diferencia': formatoNumero(item.total - (stockExcel.find(
                         stock => stock.code === item.code
-                    )?.stockdep ?? 0)
+                    )?.stockdep ?? 0))
                 });
             });
         }
@@ -472,21 +487,21 @@ const Productos = () => {
         // </section>
         <section className="container-fluid p-3">
             <section className="d-flex align-items-center justify-content-between">
-            <div className="me-5">
-                        <input
-                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            style={{ display: 'none' }}
-                            id="raised-button-file"
-                            multiple
-                            type="file"
-                            onChange={handleFileSelect}
-                        />
-                        <label htmlFor="raised-button-file">
-                            <Button variant="contained" component="span" startIcon={<CloudUploadIcon />}>
-                                {fileName}
-                            </Button>
-                        </label>
-                    </div>
+                <div className="me-5">
+                    <input
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        style={{ display: 'none' }}
+                        id="raised-button-file"
+                        multiple
+                        type="file"
+                        onChange={handleFileSelect}
+                    />
+                    <label htmlFor="raised-button-file">
+                        <Button variant="contained" component="span" startIcon={<CloudUploadIcon />}>
+                            {fileName}
+                        </Button>
+                    </label>
+                </div>
                 <button className="btn btn-danger" onClick={() => navigate('/')}>Salir</button>
             </section>
             <h1 className="text-center text-light">Productos</h1>
@@ -521,7 +536,7 @@ const Productos = () => {
 
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3 flex-wrap " style={{ marginRight: '9%' }}>
-                    
+
                     {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')} ><span>Reset usuarios</span></button>}
                     {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>}
                     <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
