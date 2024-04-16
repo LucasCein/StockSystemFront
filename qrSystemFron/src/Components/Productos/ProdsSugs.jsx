@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
+
 
 const ProdsSugs = ({ name, setProducto, producto, close }) => {
     const [articulos, setArticulos] = useState([]);
