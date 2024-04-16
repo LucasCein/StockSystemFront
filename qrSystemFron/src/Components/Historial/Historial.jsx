@@ -10,7 +10,7 @@ const Historial = () => {
     const [fechaHasta, setFechaHasta] = useState("");
 
     useEffect(() => {
-        fetch('https://stocksystemback-uorn.onrender.com/users')
+        fetch('https://stocksystemback-mxpi.onrender.com/users')
             .then(response => response.json())
             .then(data => {
                 setUsers(data);
@@ -20,7 +20,7 @@ const Historial = () => {
             });
     }, [])
     const getproductos = (userName) => {
-        fetch(`https://stocksystemback-uorn.onrender.com/historial/${userName}`)
+        fetch(`https://stocksystemback-mxpi.onrender.com/historial/${userName}`)
             .then(response => response.json())
             .then(data => {
                 setProductos(data);

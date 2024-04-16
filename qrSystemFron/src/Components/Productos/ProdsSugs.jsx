@@ -16,7 +16,7 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
     }, []);
     const articulosPorPagina = isMobile ? 2 : 5;
     useEffect(() => {
-        fetch('https://stocksystemback-uorn.onrender.com/products/suggest')
+        fetch('https://stocksystemback-mxpi.onrender.com/products/suggest')
             .then(response => response.json())
             .then(data => { setArticulos(data), setSuggestions(data) })
             .catch(error => console.error(error));

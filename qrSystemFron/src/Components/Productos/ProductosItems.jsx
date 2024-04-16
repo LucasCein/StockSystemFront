@@ -52,7 +52,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
                 if (userName == 'admin') {
-                    fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${productid}`, {
+                    fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin/${productid}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                 }
                 else {
 
-                    fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`, {
+                    fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${productid}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
 
     const getQR = async (productid) => {
-        const response = await fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${productid}`);
+        const response = await fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${productid}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

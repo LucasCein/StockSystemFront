@@ -66,7 +66,7 @@ const ABMProductos = () => {
         };
     }, []);
     useEffect(() => {
-        fetch('https://stocksystemback-uorn.onrender.com/products/suggest')
+        fetch('https://stocksystemback-mxpi.onrender.com/products/suggest')
             .then(response => response.json())
             .then(data => setArticulos(data))
             .catch(error => console.error(error));
@@ -74,14 +74,14 @@ const ABMProductos = () => {
     useEffect(() => {
         if (userName.includes('admin')) {
 
-            fetch('https://stocksystemback-uorn.onrender.com/productos/admin')
+            fetch('https://stocksystemback-mxpi.onrender.com/productos/admin')
                 .then(response => response.json())
                 .then(data => setProductos(data))
                 .catch(error => console.error(error));
 
         }
         else {
-            fetch(`https://stocksystemback-uorn.onrender.com/products/${userName}`)
+            fetch(`https://stocksystemback-mxpi.onrender.com/products/${userName}`)
                 .then(response => response.json())
                 .then(data => setProductos(data))
                 .catch(error => console.error(error));
@@ -92,7 +92,7 @@ const ABMProductos = () => {
         setError("")
         if (productid) {
             if (userName == 'admin') {
-                fetch(`https://stocksystemback-uorn.onrender.com/productos/admin/${idprod == 0 ? productid : idprod}`)
+                fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin/${idprod == 0 ? productid : idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('success', data)
@@ -110,7 +110,7 @@ const ABMProductos = () => {
                     });
             }
             else {
-                fetch(`https://stocksystemback-uorn.onrender.com/products/edit/${idprod == 0 ? productid : idprod}`)
+                fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${idprod == 0 ? productid : idprod}`)
                     .then(response => response.json())
                     .then(data => {
                         // Asumiendo que 'data' es el objeto que contiene la fecha en formato ISO
@@ -140,7 +140,7 @@ const ABMProductos = () => {
     console.log(userName)
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
-        fetch('https://stocksystemback-uorn.onrender.com/products')
+        fetch('https://stocksystemback-mxpi.onrender.com/products')
             .then(response => response.json())
             .then(data => {
                 setProductos(data);
@@ -343,7 +343,7 @@ const ABMProductos = () => {
 
         // if (producto.quantityb == 0 && producto.quantityu == 0) {
         //     try {
-        //         fetch(`https://stocksystemback-uorn.onrender.com/products/${productid}`, {
+        //         fetch(`https://stocksystemback-mxpi.onrender.com/products/${productid}`, {
         //             method: 'DELETE',
         //             headers: {
         //                 'Content-Type': 'application/json'
@@ -386,7 +386,7 @@ const ABMProductos = () => {
             const total = (parseInt(producto.quantityb) * parseInt(producto.unxcaja)) + parseInt(producto.quantityu)
             if (userName == 'admin') {
                 try {
-                    const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
+                    const respuesta = await fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -424,7 +424,7 @@ const ABMProductos = () => {
             else {
 
                 try {
-                    const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
+                    const respuesta = await fetch(`https://stocksystemback-mxpi.onrender.com/products`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -475,7 +475,7 @@ const ABMProductos = () => {
                 };
                 if (userName == 'admin') {
                     try {
-                        const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/productos/admin`, {
+                        const respuesta = await fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -503,7 +503,7 @@ const ABMProductos = () => {
                 else {
 
                     try {
-                        const respuesta = await fetch(`https://stocksystemback-uorn.onrender.com/products`, {
+                        const respuesta = await fetch(`https://stocksystemback-mxpi.onrender.com/products`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -536,7 +536,7 @@ const ABMProductos = () => {
 
             if (userName == 'admin') {
                 try {
-                    const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/productos/admin', {
+                    const respuesta = await fetch('https://stocksystemback-mxpi.onrender.com/productos/admin', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -567,7 +567,7 @@ const ABMProductos = () => {
             else {
 
                 try {
-                    const respuesta = await fetch('https://stocksystemback-uorn.onrender.com/products', {
+                    const respuesta = await fetch('https://stocksystemback-mxpi.onrender.com/products', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
