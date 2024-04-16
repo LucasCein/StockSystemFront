@@ -600,13 +600,13 @@ const ABMProductos = () => {
 
         }
         // actualizarListaProductos();
-        if (productid) {
-            const nextProd = navigateToNextProduct()
-            if (nextProd == null) {
-                console.log(nextProd)
-                close()
-            }
-        }
+        // if (productid) {
+        //     const nextProd = navigateToNextProduct()
+        //     if (nextProd == null) {
+        //         console.log(nextProd)
+        //         close()
+        //     }
+        // }
         setError("")
         setIsSubmitting(false)
     }
