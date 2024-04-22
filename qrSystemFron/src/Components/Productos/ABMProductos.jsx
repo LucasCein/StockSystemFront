@@ -558,7 +558,7 @@ const ABMProductos = () => {
                     })
                     const resultado = await respuesta.json();
                     console.log('Producto agregado con éxito:', resultado);
-                    close(); // Cerrar el modal o resetear el formulario como sea necesario
+                    //close(); // Cerrar el modal o resetear el formulario como sea necesario
                 } catch (error) {
                     console.error('Error al agregar el producto:', error);
                     setError(error.message);
@@ -589,7 +589,7 @@ const ABMProductos = () => {
                     })
                     const resultado = await respuesta.json();
                     console.log('Producto agregado con éxito:', resultado);
-                    close(); // Cerrar el modal o resetear el formulario como sea necesario
+                    //close(); // Cerrar el modal o resetear el formulario como sea necesario
                 } catch (error) {
                     console.error('Error al agregar el producto:', error);
                     setError(error.message);
