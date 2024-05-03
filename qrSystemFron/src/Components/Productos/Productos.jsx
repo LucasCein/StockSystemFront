@@ -54,8 +54,7 @@ const Productos = () => {
                 });
 
         }
-
-
+        //aaaa
         else {
             fetch(`https://stocksystemback-mxpi.onrender.com/products/${user}`)
                 .then(response => response.json())
