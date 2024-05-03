@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -9,7 +9,9 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
     const {userName,setUserName,setUserId}=useContext(ProvRouteContext)
-    
+    useEffect(() => {
+        sessionStorage.setItem('userName', name);
+    }, [name]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

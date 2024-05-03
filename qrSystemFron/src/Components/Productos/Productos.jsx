@@ -31,6 +31,14 @@ const Productos = () => {
     const [stockExcel, setStockExcel] = useState([])
     const [fileName, setFileName] = useState('')
     // Función para actualizar la lista de productos
+    useEffect(() => {
+        const datoGuardado = sessionStorage.getItem('userName');
+        if (datoGuardado) {
+            setUserName(datoGuardado);
+            setUser(datoGuardado);
+        }
+
+    }, []);
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
         if (user == 'admin') {
