@@ -25,7 +25,6 @@ const Productos = () => {
     const [orden, setOrden] = useState({ columna: 'date', direccion: 'asc' });
     const navigate = useNavigate()
     const { userName, setUserName } = useContext(ProvRouteContext)
-    const [user, setUser] = useState(userName)
     const [prodsAdmin, setProdsAdmin] = useState([])
     const [allProducts, setAllProducts] = useState([])
     const [stockExcel, setStockExcel] = useState([])
@@ -35,13 +34,12 @@ const Productos = () => {
         const datoGuardado = sessionStorage.getItem('userName');
         if (datoGuardado) {
             setUserName(datoGuardado);
-            setUser(datoGuardado);
         }
 
     }, []);
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
-        if (user == 'admin') {
+        if (userName == 'admin') {
             fetch('https://stocksystemback-mxpi.onrender.com/products')
                 .then(response => response.json())
                 .then(data => {
@@ -64,7 +62,7 @@ const Productos = () => {
         }
         //aaaa
         else {
-            fetch(`https://stocksystemback-mxpi.onrender.com/products/${user}`)
+            fetch(`https://stocksystemback-mxpi.onrender.com/products/${userName}`)
                 .then(response => response.json())
                 .then(data => {
                     setProductos(data);
@@ -76,9 +74,11 @@ const Productos = () => {
         }
 
     };
+    console.log(allProducts)
+    console.log(productos)
     console.log(prodsAdmin)
     useEffect(() => {
-        setUser(userName)
+    
         actualizarListaProductos()
         if (userName == 'admin') {
             try {
@@ -100,7 +100,7 @@ const Productos = () => {
     useEffect(() => {
         console.log('prodadmin', prodsAdmin)
 
-        if (user == 'admin') {
+        if (userName == 'admin') {
             const prods = productos.filter((prod) => {
                 return !prodsAdmin.includes(prod.id)
             })
@@ -172,10 +172,6 @@ const Productos = () => {
         }
     }
 
-    // Ejemplo de uso
-    console.log(formatoNumero(-123));  // Imprime "(123)"
-    console.log(formatoNumero(456));   // Imprime "456"
-
     const prepararDatosParaExcel = (productosAgrupados) => {
         const datosExcel = [];
         for (const prod in productosAgrupados) {
@@ -200,20 +196,6 @@ const Productos = () => {
         }
         return datosExcel;
     };
-
-    const mapDataForExcel = (data) => {
-        return data.map(item => ({
-            'Codigo': item.code,
-            'EAN': item.codbarras,
-            'Descripcion': item.name,
-            'Cod Proveedor': item.codprov,
-            'Cantidad Unid.': item.quantityu,
-            'Cantidad Bulto': item.quantityb,
-            'Unid. x Caja': item.unxcaja,
-            'Total': item.total,
-        }));
-    }
-
     const exportToExcel = (apiData, fileName) => {
         console.log('allproducts', allProducts)
         try {
@@ -247,6 +229,7 @@ const Productos = () => {
     }
 
     const ordenarProductos = (productos) => {
+        console.log(productos)
         return productos.sort((a, b) => {
             if (a[orden.columna] < b[orden.columna]) {
                 return orden.direccion === 'asc' ? -1 : 1;
@@ -290,7 +273,7 @@ const Productos = () => {
             setProdsFiltrados(productos);
         }
     };
-    const resetProds = async (user) => {
+    const resetProds = async (userName) => {
         const MySwal = withReactContent(Swal);
 
         // Mostrar un modal de confirmación
@@ -307,7 +290,7 @@ const Productos = () => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
 
-                fetch(user == 'admin' ? `https://stocksystemback-mxpi.onrender.com/productos/admin` : `https://stocksystemback-mxpi.onrender.com/products`, {
+                fetch(userName == 'admin' ? `https://stocksystemback-mxpi.onrender.com/productos/admin` : `https://stocksystemback-mxpi.onrender.com/products`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -424,8 +407,8 @@ const Productos = () => {
         console.log("Datos enviados al servidor:", data);
         // Aquí implementarías la lógica para enviar los datos al servidor
     }
-    console.log(prodsFiltrados)
-    const productosOrdenados = ordenarProductos(user == 'admin' ? prodsFiltrados.length > 0 ? prodsFiltrados : prodsAdmin : prodsFiltrados.length > 0 ? prodsFiltrados : productos);
+    console.log(prodsAdmin)
+    const productosOrdenados = ordenarProductos(userName == 'admin' ? prodsFiltrados.length > 0 ? prodsFiltrados : prodsAdmin : prodsFiltrados.length > 0 ? prodsFiltrados : productos);
     return (
         // <section>
         //     <section>
@@ -544,7 +527,7 @@ const Productos = () => {
             <MDBListGroup className="mt-3">
                 <section className="d-flex justify-content-end mb-3 flex-wrap " style={{ marginRight: '9%' }}>
 
-                    {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('user')} ><span>Reset usuarios</span></button>}
+                    {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('userName')} ><span>Reset usuarios</span></button>}
                     {userName == 'admin' && <button className="btn btn-danger btn-sm me-2 mb-2" onClick={() => resetProds('admin')}><span>Reset admin</span></button>}
                     <button className="btn btn-light btn-sm me-2 mb-2" onClick={() => actualizarListaProductos()}><i className="fa fa-refresh"></i></button>
                     <button
