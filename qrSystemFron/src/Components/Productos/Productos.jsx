@@ -325,13 +325,13 @@ const Productos = () => {
                             'success'
                         );
                         // Actualizar lista de productos
-                        actualizarListaProductos();
+                        
                     })
                     .catch(error => {
                         console.error('Error al eliminar los productos:', error);
                         Swal.fire('Error', error.message, 'error'); // Mostrar mensaje de error
                     });
-
+                    actualizarListaProductos();
             }
         });
     }
