@@ -163,6 +163,7 @@ const ABMProductos = () => {
       const prod=articulos.find((art) => art.code === value);
       if(prod){
         setProducto({
+          ...producto,
           code: value,
           name: prod.descripcion,
           codbarras: prod.codbarras,
@@ -170,6 +171,8 @@ const ABMProductos = () => {
           unxcaja: prod.unxcaja,
           familia: prod.familia,
           marca: prod.marca,
+          quantityb:0,
+          quantityu:0
         });
       }
     }

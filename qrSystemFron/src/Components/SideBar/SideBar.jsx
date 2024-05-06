@@ -1,17 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  BsGrid1X2Fill,
   BsFillGrid3X3GapFill,
   BsClockHistory,
-  BsCashCoin,
-  BsFileEarmarkText,
-  BsHouse,
-  BsFillPersonFill,
-  BsCurrencyDollar,
-  BsQuestionCircle,
   BsFillPersonLinesFill,
 } from "react-icons/bs";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
