@@ -15,7 +15,6 @@ const ABMProductos = () => {
   const { productid = null } = location.state || {};
   const [productos, setProductos] = useState([]);
   const [articulos, setArticulos] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
   const [suggestionP, setSuggestionP] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const codeRef = useRef(null);
@@ -156,50 +155,22 @@ const ABMProductos = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(name, value);
-    if (name === "date") {
-      // Convierte el valor del input y la fecha actual a formato YYYY-MM-DD
-      const inputDate = new Date(value).toISOString().split("T")[0];
-      const today = new Date().toISOString().split("T")[0];
-
-      if (inputDate < today) {
-        setError("La fecha no puede ser anterior a la actual");
-      } else {
-        setError("");
-      }
-      setProducto({ ...producto, [name]: value });
-    } else if (name == "code") {
-      setProducto({ ...producto, code: value });
-      console.log("code", value);
-      if (value) {
-        setSuggestions(
-          articulos.filter((art) =>
-            art.code.toLowerCase().includes(value.toLowerCase())
-          )
-        );
-      } else {
-        setSuggestions([]);
-      }
-    } else if (name == "name") {
-      setProducto({ ...producto, name: value });
-      if (value) {
-        setSuggestions(
-          articulos.filter((art) =>
-            art.descripcion.toLowerCase().includes(value.toLowerCase())
-          )
-        );
-      } else {
-        setSuggestions([]);
-      }
-    } else {
-      // Manejo de otros campos
-      if (
-        name === "quantityb" ||
-        name === "quantityu" ||
-        name === "idealstock"
-      ) {
-        setProducto({ ...producto, [name]: value === "" ? "" : Number(value) });
-      } else {
-        setProducto({ ...producto, [name]: value });
+    setProducto({
+      ...producto,
+      [name]: value,
+    });
+    if(name == 'code'){
+      const prod=articulos.find((art) => art.code === value);
+      if(prod){
+        setProducto({
+          code: value,
+          name: prod.descripcion,
+          codbarras: prod.codbarras,
+          codprov: prod.codprov,
+          unxcaja: prod.unxcaja,
+          familia: prod.familia,
+          marca: prod.marca,
+        });
       }
     }
   };
@@ -682,7 +653,6 @@ const ABMProductos = () => {
               {(close) => (
                 <ProdsSugs
                   name={"code"}
-                  prods={suggestions}
                   setProducto={setProducto}
                   producto={producto}
                   close={close}
@@ -719,7 +689,6 @@ const ABMProductos = () => {
               {(close) => (
                 <ProdsSugs
                   name={"codprov"}
-                  prods={suggestions}
                   setProducto={setProducto}
                   producto={producto}
                   close={close}
@@ -756,7 +725,6 @@ const ABMProductos = () => {
               {(close) => (
                 <ProdsSugs
                   name={"descripcion"}
-                  prods={suggestions}
                   setProducto={setProducto}
                   producto={producto}
                   close={close}
