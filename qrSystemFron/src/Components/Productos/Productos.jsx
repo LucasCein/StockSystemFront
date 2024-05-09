@@ -35,10 +35,58 @@ const Productos = () => {
         if (datoGuardado) {
             setUserName(datoGuardado);
         }
-
     }, []);
+    useEffect(() => {
+        console.log(userName)
+        if(userName){
+            actualizarListaProductos()
+        }
+        
+        if (userName == 'admin') {
+            try {
+                fetch('https://stocksystemback-mxpi.onrender.com/allproducts')
+                    .then(response => response.json())
+                    .then(data => {
+                        setAllProducts(data); // Esto establece los productos en tu estado o donde necesites.
+                        console.log('data', data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [userName]);
+    console.log(userName)
+    useEffect(() => {
+        console.log('prodadmin', prodsAdmin)
+
+        if (userName == 'admin') {
+            const prods = productos.filter((prod) => {
+                return !prodsAdmin.includes(prod.id)
+            })
+            console.log('filteredprods', prods)
+
+            fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(prods)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    }, [prodsAdmin])
     const actualizarListaProductos = () => {
         // Llamada a la API para obtener la lista actualizada
+        console.log('user', userName)
         if (userName == 'admin') {
             fetch('https://stocksystemback-mxpi.onrender.com/products')
                 .then(response => response.json())
@@ -74,82 +122,14 @@ const Productos = () => {
         }
 
     };
-    console.log(allProducts)
-    console.log(productos)
-    console.log(prodsAdmin)
-    useEffect(() => {
     
-        actualizarListaProductos()
-        if (userName == 'admin') {
-            try {
-                fetch('https://stocksystemback-mxpi.onrender.com/allproducts')
-                    .then(response => response.json())
-                    .then(data => {
-                        setAllProducts(data); // Esto establece los productos en tu estado o donde necesites.
-                        console.log('data', data);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }, []);
-    console.log(userName)
-    useEffect(() => {
-        console.log('prodadmin', prodsAdmin)
-
-        if (userName == 'admin') {
-            const prods = productos.filter((prod) => {
-                return !prodsAdmin.includes(prod.id)
-            })
-            console.log('filteredprods', prods)
-
-            fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(prods)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }
-    }, [prodsAdmin])
     const cambiarOrden = (columna) => {
         setOrden((ordenActual) => ({
             columna,
             direccion: ordenActual.direccion === 'asc' && ordenActual.columna === columna ? 'desc' : 'asc'
         }));
     };
-    function formatToDDMMYYYY(dateString) {
-        // Dividimos la cadena de fecha en sus componentes (año, mes, día)
-        let dateParts = dateString.split('-');
-
-        // Convertimos los componentes en números enteros
-        // Date interpreta los meses desde 0 (enero) hasta 11 (diciembre), por lo que restamos 1 al mes
-        let year = parseInt(dateParts[0], 10);
-        let month = parseInt(dateParts[1], 10) - 1;
-        let day = parseInt(dateParts[2], 10);
-
-        // Creamos un objeto de fecha con los componentes
-        let date = new Date(year, month, day);
-
-        // Obtenemos el día, mes y año del objeto de fecha
-        // Asegurándonos de añadir un cero delante si es menor de 10
-        let formattedDay = ('0' + date.getDate()).slice(-2);
-        let formattedMonth = ('0' + (date.getMonth() + 1)).slice(-2);
-        let formattedYear = date.getFullYear();
-
-        // Construimos la cadena con el formato DD/MM/YYYY
-        return `${formattedDay}/${formattedMonth}/${formattedYear}`;
-    }
+    
     // Agrupar los productos por marca
     const agruparPorFamilia = (productos) => {
         return productos.reduce((acc, producto) => {
@@ -229,7 +209,6 @@ const Productos = () => {
     }
 
     const ordenarProductos = (productos) => {
-        console.log(productos)
         return productos.sort((a, b) => {
             if (a[orden.columna] < b[orden.columna]) {
                 return orden.direccion === 'asc' ? -1 : 1;
@@ -255,24 +234,7 @@ const Productos = () => {
             setProdsFiltrados(productos);
         }
     };
-    const changeDate = (update) => {
-        const [start, end] = update;
-        setDateRange(update);
 
-        // Verifica si ambas fechas, inicio y fin, están establecidas
-        if (start && end) {
-            const sDate = new Date(start).toISOString().split('T')[0];
-            const eDate = new Date(end).toISOString().split('T')[0];
-            console.log(sDate)
-            console.log(eDate)
-            setProdsFiltrados(productos.filter((prod) => {
-                const prodDate = new Date(prod.date).toISOString().split('T')[0];
-                return prodDate >= sDate && prodDate <= eDate;
-            }));
-        } else {
-            setProdsFiltrados(productos);
-        }
-    };
     const resetProds = async (userName) => {
         const MySwal = withReactContent(Swal);
 
