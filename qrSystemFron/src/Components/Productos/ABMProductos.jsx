@@ -329,14 +329,17 @@ const ABMProductos = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setIsSubmitting(true);
+    
     console.log(producto.name, producto.code, producto.idealstock);
 
     if (!producto.name || !producto.code) {
       setError("Todos los campos son obligatorios");
+      setIsSubmitting(false);
       return;
     }
     if (producto.quantityb <= 0 && producto.quantityu <= 0) {
       setError("Las cantidades deben ser mayores a 0");
+      setIsSubmitting(false);
       return;
     }
     if (productid) {
@@ -358,6 +361,7 @@ const ABMProductos = () => {
           );
 
           if (!respuesta.ok) {
+            
             throw new Error(`HTTP error! status: ${respuesta.status}`);
           }
           const MySwal = withReactContent(Swal);
@@ -365,12 +369,14 @@ const ABMProductos = () => {
             title: <strong>Se ha agregado con Exito!</strong>,
             icon: "success",
             preConfirm: () => {
+              setIsSubmitting(true);
               navigate("/productos");
             },
           });
         } catch (error) {
           console.error("Error al actualizar el producto:", error);
           setError(error.message);
+          setIsSubmitting(false);
         }
       } else {
         try {
@@ -393,12 +399,14 @@ const ABMProductos = () => {
             title: <strong>Se ha agregado con Exito!</strong>,
             icon: "success",
             preConfirm: () => {
+              setIsSubmitting(true);
               navigate("/productos");
             },
           });
         } catch (error) {
           console.error("Error al actualizar el producto:", error);
           setError(error.message);
+          setIsSubmitting(false);
         }
       }
     } else {
@@ -446,12 +454,14 @@ const ABMProductos = () => {
               title: <strong>Se ha agregado con Exito!</strong>,
               icon: "success",
               preConfirm: () => {
+                setIsSubmitting(true);
                 navigate("/productos");
               },
             });
             // Código para manejar la respuesta exitosa
           } catch (error) {
             console.error("Error al actualizar el producto:", error);
+            setIsSubmitting(false);
             setError(error.message);
           }
         }
@@ -479,6 +489,7 @@ const ABMProductos = () => {
             title: <strong>Se ha agregado con Exito!</strong>,
             icon: "success",
             preConfirm: () => {
+              setIsSubmitting(true);
               navigate("/productos");
             },
           });
@@ -487,6 +498,7 @@ const ABMProductos = () => {
           //close(); // Cerrar el modal o resetear el formulario como sea necesario
         } catch (error) {
           console.error("Error al agregar el producto:", error);
+          setIsSubmitting(false);
           setError(error.message);
         }
       } else {
@@ -535,12 +547,14 @@ const ABMProductos = () => {
               title: <strong>Se ha actualizado con Exito!</strong>,
               icon: "success",
               preConfirm: () => {
+                setIsSubmitting(true);
                 navigate("/productos");
               },
             });
             // Código para manejar la respuesta exitosa
           } catch (error) {
             console.error("Error al actualizar el producto:", error);
+            setIsSubmitting(false);
             setError(error.message);
           }
         }
@@ -570,6 +584,7 @@ const ABMProductos = () => {
               title: <strong>Se ha agregado con Exito!</strong>,
               icon: "success",
               preConfirm: () => {
+                setIsSubmitting(true);
                 navigate("/productos");
               },
             });
@@ -578,6 +593,7 @@ const ABMProductos = () => {
             //close(); // Cerrar el modal o resetear el formulario como sea necesario
           } catch (error) {
             console.error("Error al agregar el producto:", error);
+            setIsSubmitting(false);
             setError(error.message);
           }
         }
@@ -815,7 +831,7 @@ const ABMProductos = () => {
           <button
             type="submit"
             className="btn btn-success mt-4"
-            disabled={isSubmitting && setError === ""}
+            disabled={isSubmitting}
           >
             {productid ? "Editar" : "Agregar"}
           </button>
