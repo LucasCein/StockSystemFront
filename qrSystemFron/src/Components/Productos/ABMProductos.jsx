@@ -506,8 +506,8 @@ const ABMProductos = () => {
           );
           const productoActualizado = {
             ...productoExistente,
-            quantityb: productoExistente.quantityb + producto.quantityb,
-            quantityu: productoExistente.quantityu + producto.quantityu,
+            quantityb: parseInt(productoExistente.quantityb) + parseInt(producto.quantityb),
+            quantityu: parseInt(productoExistente.quantityu) + parseInt(producto.quantityu),
             total:
               (parseInt(productoExistente.quantityb) +
                 parseInt(producto.quantityb)) *
@@ -532,7 +532,7 @@ const ABMProductos = () => {
             }
             const MySwal = withReactContent(Swal);
             MySwal.fire({
-              title: <strong>Se ha agregado con Exito!</strong>,
+              title: <strong>Se ha actualizado con Exito!</strong>,
               icon: "success",
               preConfirm: () => {
                 navigate("/productos");
@@ -544,40 +544,42 @@ const ABMProductos = () => {
             setError(error.message);
           }
         }
-        try {
-          const respuesta = await fetch(
-            "https://stocksystemback-mxpi.onrender.com/products",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                ...producto,
-                total:
-                  producto.quantityb * producto.unxcaja + producto.quantityu,
-                username: [userName],
-              }),
+        else{
+          try {
+            const respuesta = await fetch(
+              "https://stocksystemback-mxpi.onrender.com/products",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  ...producto,
+                  total:
+                    producto.quantityb * producto.unxcaja + producto.quantityu,
+                  username: [userName],
+                }),
+              }
+            );
+  
+            if (!respuesta.ok) {
+              throw new Error(`HTTP error! status: ${respuesta.status}`);
             }
-          );
-
-          if (!respuesta.ok) {
-            throw new Error(`HTTP error! status: ${respuesta.status}`);
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+              title: <strong>Se ha agregado con Exito!</strong>,
+              icon: "success",
+              preConfirm: () => {
+                navigate("/productos");
+              },
+            });
+            const resultado = await respuesta.json();
+            console.log("Producto agregado con éxito:", resultado);
+            //close(); // Cerrar el modal o resetear el formulario como sea necesario
+          } catch (error) {
+            console.error("Error al agregar el producto:", error);
+            setError(error.message);
           }
-          const MySwal = withReactContent(Swal);
-          MySwal.fire({
-            title: <strong>Se ha agregado con Exito!</strong>,
-            icon: "success",
-            preConfirm: () => {
-              navigate("/productos");
-            },
-          });
-          const resultado = await respuesta.json();
-          console.log("Producto agregado con éxito:", resultado);
-          //close(); // Cerrar el modal o resetear el formulario como sea necesario
-        } catch (error) {
-          console.error("Error al agregar el producto:", error);
-          setError(error.message);
         }
       }
       // Si todo está correcto, intenta hacer el POST
