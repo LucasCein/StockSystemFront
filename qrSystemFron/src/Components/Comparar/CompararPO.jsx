@@ -1,0 +1,59 @@
+import { useState } from "react";
+import * as XLSX from 'xlsx';
+import Spreadsheet from 'react-spreadsheet';
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+const CompararPO = () => {
+  const location = useLocation();
+  const { fileId } = location.state || {};
+    const [data, setData] = useState([]);
+    const [fileId2, setFileId2] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
+    const rowsPerPage = 15; // Número de filas por página
+    const navigate=useNavigate();
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'buffer' });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        setData(json);
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        fetch('https://stocksystemback-mxpi.onrender.com/comparar', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          setFileId2(data.fileId); // Opcionalmente guardar el fileId en el estado
+        })
+        .catch(error => console.error('Error:', error));
+      };
+    const nextPage = () => setCurrentPage(currentPage + 1);
+    const prevPage = () => setCurrentPage(currentPage - 1);
+    const currentData = data.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
+    
+    return (
+        <section>
+            <h1 className="text-light text-center mt-3">Planilla Operador Limpia</h1>
+            <section className="d-flex flex-column gap-5">
+                <input className="ms-5" type="file" onChange={handleFileChange} accept=".xlsx, .xls" />
+                <Spreadsheet className="mx-auto" data={currentData.map(row => row.map(cell => ({ value: cell })))} />
+                <section className="d-flex gap-3 justify-content-center">
+                    <button onClick={prevPage} disabled={currentPage === 0}>Anterior</button>
+                    <button onClick={nextPage} disabled={(currentPage + 1) * rowsPerPage >= data.length}>Siguiente</button>
+                </section>
+                {/* PO: planilla operador */}
+                <section className="mx-auto">
+                <button className="btn btn-success" onClick={() => navigate(`/comparar`, { state: { fileId,fileId2 } })}>Comparar</button>
+                </section>
+            </section>
+        </section>
+
+    )
+}
+
+
+export default CompararPO

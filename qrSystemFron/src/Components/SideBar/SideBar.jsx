@@ -3,6 +3,7 @@ import {
   BsFillGrid3X3GapFill,
   BsClockHistory,
   BsFillPersonLinesFill,
+  BsTable,
 } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
@@ -39,58 +40,37 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       </div>
 
       <ul className="sidebar-list">
-        {/* <li className='sidebar-list-item'>
-                <NavLink to="/home">
-                    <BsGrid1X2Fill className='icon'/> Dashboard
-                </NavLink>
-            </li>
-            <li className='sidebar-list-item'>
-                <NavLink to={"/properties"}>
-                    <BsHouse className='icon'/> Propiedades
-                </NavLink>
-            </li> */}
-        <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar: null}>
-          <NavLink to={"/productos"}>
-            <BsFillGrid3X3GapFill className="icon" />{" "}
-            <span className="text-light">Productos</span>
-          </NavLink>
-        </li>
-        {userName == "admin" && (
-          <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar: null}>
-            <NavLink to={"/historial"}>
-              <BsClockHistory className="icon" />{" "}
-              <span className="text-light">Historial</span>
+        {userName !== "admin" &&
+        
+          <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar : null}>
+            <NavLink to={"/productos"}>
+              <BsFillGrid3X3GapFill className="icon" />{" "}
+              <span className="text-light">Productos</span>
             </NavLink>
-          </li>
+          </li>}
+        {userName == "admin" && (
+          <>
+            <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar : null}>
+              <NavLink to={"/compararps"}>
+                <BsTable className="icon" />{" "}
+                <span className="text-light">Comparar Planillas</span>
+              </NavLink>
+            </li>
+            <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar : null}>
+              <NavLink to={"/compararope"}>
+                <BsTable className="icon" />{" "}
+                <span className="text-light">Comparar Operadores</span>
+              </NavLink>
+            </li>
+            <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar : null}>
+              <NavLink to={"/historial"}>
+                <BsClockHistory className="icon" />{" "}
+                <span className="text-light">Historial</span>
+              </NavLink>
+            </li>
+          </>
         )}
-        {/* <li className='sidebar-list-item'>
-                <NavLink to={"/products/24"}>
-                    <BsCashCoin className='icon'/> Pagos
-                </NavLink>
-            </li>  */}
-        {/* 
-            <li className='sidebar-list-item'>
-                <NavLink to={"/bill"}>
-                    <BsFileEarmarkText className='icon'/> Facturas
-                </NavLink>
-            </li>
 
-            <li className='sidebar-list-item'>
-                <NavLink to={"/Clientes"}>
-                    <BsFillPersonFill className='icon'/> Clientes
-                </NavLink>
-            </li>
-
-            <li className='sidebar-list-item'>
-                <NavLink to={"/Ventas"}>
-                    <BsCurrencyDollar className='icon'/> Ventas
-                </NavLink>
-            </li>
-            <li className='sidebar-list-item'>
-                <NavLink to={"/Consultas"}>
-                    <BsQuestionCircle className='icon'/> Consultas
-                </NavLink>
-            </li> */}
       </ul>
     </aside>
   );

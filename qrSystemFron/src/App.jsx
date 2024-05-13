@@ -9,6 +9,10 @@ import DetalleProducto from './Components/Productos/DetalleProducto'
 import Login from './Components/Login/Login'
 import ABMProductos from './Components/Productos/ABMProductos'
 import Historial from './Components/Historial/Historial'
+import CompararPS from './Components/Comparar/CompararPS'
+import CompararPO from './Components/Comparar/CompararPO'
+import Comparar from './Components/Comparar/Comparar'
+import CompararOp from './Components/Comparar/CompararOp'
 
 
 function App() {
@@ -62,6 +66,42 @@ function App() {
               <Header OpenSidebar={OpenSidebar} />
               <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
               <Historial></Historial>
+            </div>
+            }
+          />
+          <Route
+            path='/compararps'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <CompararPS></CompararPS>
+            </div>
+            }
+          />
+          <Route
+            path='/compararpo'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <CompararPO></CompararPO>
+            </div>
+            }
+          />
+          <Route
+            path='/comparar'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <Comparar></Comparar>
+            </div>
+            }
+          />
+          <Route
+            path='/compararope'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <CompararOp></CompararOp>
             </div>
             }
           />

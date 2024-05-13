@@ -476,7 +476,7 @@ const ABMProductos = () => {
               body: JSON.stringify({
                 ...producto,
                 total:
-                  producto.quantityb * producto.unxcaja + producto.quantityu,
+                  parseInt(producto.quantityb) * parseInt(producto.unxcaja) + parseInt(producto.quantityu),
               }),
             }
           );
@@ -570,7 +570,7 @@ const ABMProductos = () => {
                 body: JSON.stringify({
                   ...producto,
                   total:
-                    producto.quantityb * producto.unxcaja + producto.quantityu,
+                    parseInt(producto.quantityb) * parseInt(producto.unxcaja) + parseInt(producto.quantityu),
                   username: [userName],
                 }),
               }
