@@ -163,16 +163,9 @@ const Productos = () => {
           Descripción: item.name,
           Marca: item.marca,
           "Caja por": item.unxcaja,
-          "DEPOSITO":
-            stockExcel.find((stock) => stock.code === item.code)?.stockdep ?? 0,
           bultos: item.quantityb,
           unidades: item.quantityu,
           total: item.total,
-          diferencia: formatoNumero(
-            item.total -
-              (stockExcel.find((stock) => stock.code === item.code)?.stockdep ??
-                0)
-          ),
         });
       });
     }
