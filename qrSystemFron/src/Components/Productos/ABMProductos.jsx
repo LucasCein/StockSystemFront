@@ -197,6 +197,9 @@ const ABMProductos = () => {
         familia: prod.familia,
         marca: prod.marca,
       };
+      setError("");
+    }else{
+      setError("El CODBARRAS no existe");
     }
 
     // Actualiza el estado con el nuevo objeto, ya sea solo con el código de barras actualizado o con el producto completo si hubo coincidencia
