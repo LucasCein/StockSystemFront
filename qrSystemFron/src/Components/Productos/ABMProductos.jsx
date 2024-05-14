@@ -30,6 +30,7 @@ const ABMProductos = () => {
   const { userName, setUserName } = useContext(ProvRouteContext);
   const [isLoading, setIsLoading] = useState(true);
   const [aux, setAux] = useState("");
+  const typingTimeout = useRef(null);
   const [producto, setProducto] = useState({
     name: "",
     code: "",
@@ -44,6 +45,9 @@ const ABMProductos = () => {
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -177,32 +181,37 @@ const ABMProductos = () => {
       }
     }
   };
-
   const handleChangeBarras = (e) => {
     const { name, value } = e.target;
-    let foundProduct = articulos.find((art) => art[name] === value);
-    if (foundProduct) {
-      // Producto encontrado
-      setProducto({
-        ...producto,
-        [name]: value,
-        code: foundProduct.code,
-        name: foundProduct.descripcion,
-        codbarras: foundProduct.codbarras,
-        codprov: foundProduct.codprov,
-        unxcaja: foundProduct.unxcaja,
-        familia: foundProduct.familia,
-        marca: foundProduct.marca,
-      });
-      setError(null);
-    } else {
-      // Producto no encontrado
-      setProducto({
-        ...producto,
-        [name]: value,
-      });
-      setError("Producto no encontrado.");
+    setProducto((prevProducto) => ({ ...prevProducto, [name]: value }));
+  
+    // Limpiar el temporizador anterior si hay uno en marcha
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
     }
+  
+    // Iniciar un nuevo temporizador
+    typingTimeout.current = setTimeout(() => {
+      // Buscar el producto solo si el valor ingresado corresponde completamente a un código de barras existente
+      const foundProduct = articulos.find((art) => art[name] === value);
+      console.log('found prod', foundProduct);
+      if (foundProduct !== undefined) {
+        // Producto encontrado
+        setProducto({
+          ...producto,
+          code: foundProduct.code,
+          name: foundProduct.descripcion,
+          codbarras: foundProduct.codbarras,
+          codprov: foundProduct.codprov,
+          unxcaja: foundProduct.unxcaja,
+          familia: foundProduct.familia,
+          marca: foundProduct.marca,
+        });
+        setError("");
+      } else {
+        setError("Producto no encontrado.");
+      }
+    }, 500); // Espera 500 ms antes de buscar el producto
   };
   
 
