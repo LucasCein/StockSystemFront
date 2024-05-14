@@ -180,31 +180,31 @@ const ABMProductos = () => {
 
   const handleChangeBarras = (e) => {
     const { name, value } = e.target;
-
-    // Actualiza el input de codbarras conforme el usuario escribe
-    let newState = { ...producto, [name]: value };
-
-    // Busca un producto solo si el valor ingresado corresponde completamente a un código de barras existente
-    const prod = articulos.find((art) => art[name] === value);
-    if (prod) {
-      newState = {
-        ...newState,
-        code: prod.code,
-        name: prod.descripcion,
-        codbarras: prod.codbarras,
-        codprov: prod.codprov,
-        unxcaja: prod.unxcaja,
-        familia: prod.familia,
-        marca: prod.marca,
-      };
-      setError("");
-    }else{
-      setError("El CODBARRAS no existe");
+    let foundProduct = articulos.find((art) => art[name] === value);
+    if (foundProduct) {
+      // Producto encontrado
+      setProducto({
+        ...producto,
+        [name]: value,
+        code: foundProduct.code,
+        name: foundProduct.descripcion,
+        codbarras: foundProduct.codbarras,
+        codprov: foundProduct.codprov,
+        unxcaja: foundProduct.unxcaja,
+        familia: foundProduct.familia,
+        marca: foundProduct.marca,
+      });
+      setError(null);
+    } else {
+      // Producto no encontrado
+      setProducto({
+        ...producto,
+        [name]: value,
+      });
+      setError("Producto no encontrado.");
     }
-
-    // Actualiza el estado con el nuevo objeto, ya sea solo con el código de barras actualizado o con el producto completo si hubo coincidencia
-    setProducto(newState);
   };
+  
 
   console.log(productos);
 
