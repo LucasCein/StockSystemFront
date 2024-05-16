@@ -1,0 +1,12 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.color-square {
+  width: 40px;
+  /* o el tamaño que prefiera */
+  height: 40px;
+  /* o el tamaño que prefiera */
+  border: 1px solid #000;
+  /* opcional, si desea un borde */
+}
