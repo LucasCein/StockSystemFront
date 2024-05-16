@@ -385,7 +385,7 @@ const CompararOp = () => {
                 </section>
             </section>
             <section className="d-flex justify-content-center mt-5 gap-5 mb-5">
-                <Button variant="contained" onClick={handleDownload}>Descargar</Button>
+                {/* <Button variant="contained" onClick={handleDownload}>Descargar</Button> */}
                 <Button variant="contained" onClick={() => exportToExcel(finalProducts, "Plantilla Limpia")}>Plantilla Limpia</Button>
             </section>
         </section>

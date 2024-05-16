@@ -30,7 +30,7 @@ const Comparar = () => {
                 const row1 = jsonData1.find(r => r[columnNames1.indexOf("Artículo")] === item);
 
                 if (row1) {
-                    const depositoIndex = columnNames1.indexOf("deposito");
+                    const depositoIndex = columnNames1.indexOf("total");
                     const totalIndex = columnNames2.indexOf("total");
                     const deposito = Number(row1[depositoIndex]);
                     const total = Number(row2[totalIndex]);
