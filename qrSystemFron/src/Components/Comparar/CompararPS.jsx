@@ -1,15 +1,26 @@
-import { useState } from "react";
+import React, { useState, useRef, useContext } from "react";
 import * as XLSX from 'xlsx';
-import Spreadsheet from 'react-spreadsheet';
-import { NavLink, useNavigate } from "react-router-dom";
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box
+} from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import { FileUpload } from 'primereact/fileupload';
+import { Toast } from 'primereact/toast';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import { PlanillasContext } from "./PlanillasContext";
+
 const CompararPS = () => {
     const [data, setData] = useState([]);
-    const [fileId, setFileId] = useState('');
+    const { fileId, setFileId } = useContext(PlanillasContext);
     const [currentPage, setCurrentPage] = useState(0);
     const rowsPerPage = 15; // Número de filas por página
     const navigate = useNavigate();
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
+    const toast = useRef(null);
+
+    const handleFileUpload = async (event) => {
+        const file = event.files[0];
         const data = await file.arrayBuffer();
         const workbook = XLSX.read(data, { type: 'buffer' });
         const worksheetName = workbook.SheetNames[0];
@@ -26,32 +37,65 @@ const CompararPS = () => {
             .then(response => response.json())
             .then(data => {
                 setFileId(data.fileId); // Opcionalmente guardar el fileId en el estado
+                toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Archivo subido y procesado con éxito', life: 3000 });
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Hubo un error al subir el archivo', life: 3000 });
+            });
     };
+
     const nextPage = () => setCurrentPage(currentPage + 1);
     const prevPage = () => setCurrentPage(currentPage - 1);
     const currentData = data.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
-    console.log(fileId)
+
     return (
         <section>
-            <h1 className="text-light text-center mt-3">Planilla Sistema</h1>
+            <h1 className="text-center mt-3">Planilla Sistema</h1>
             <section className="d-flex flex-column gap-5">
-                <input className="ms-5" type="file" onChange={handleFileChange} accept=".xlsx, .xls" />
-                <Spreadsheet className="mx-auto" data={currentData.map(row => row.map(cell => ({ value: cell })))} />
-                <section className="d-flex gap-3 justify-content-center">
-                    <button onClick={prevPage} disabled={currentPage === 0}>Anterior</button>
-                    <button onClick={nextPage} disabled={(currentPage + 1) * rowsPerPage >= data.length}>Siguiente</button>
-                </section>
+                <Toast ref={toast} />
+                <Box sx={{ maxWidth: '50%', margin: 'auto' }}>
+                    <FileUpload
+                        mode="basic"
+                        name="demo[]"
+                        accept=".xlsx,.xls"
+                        maxFileSize={1000000}
+                        customUpload
+                        uploadHandler={handleFileUpload}
+                        chooseLabel="Seleccionar Archivo"
+                    />
+                </Box>
+                <TableContainer component={Paper} sx={{ maxWidth: '80%', margin: 'auto', mt: 3 }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                {currentData[0] && currentData[0].map((cell, index) => (
+                                    <TableCell key={index}>{cell}</TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {currentData.slice(1).map((row, rowIndex) => (
+                                <TableRow key={rowIndex}>
+                                    {row.map((cell, cellIndex) => (
+                                        <TableCell key={cellIndex}>{cell}</TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box className="d-flex gap-3 justify-content-center">
+                    <Button variant="contained" onClick={prevPage} disabled={currentPage === 0}>Anterior</Button>
+                    <Button variant="contained" onClick={nextPage} disabled={(currentPage + 1) * rowsPerPage >= data.length}>Siguiente</Button>
+                </Box>
                 {/* PO: planilla operador */}
-                <section className="mx-auto">
-                <button className="btn btn-success" onClick={() => navigate(`/compararpo`, { state: { fileId } })}>Siguiente</button>
-                </section>
+                {/* <Box className="mx-auto"> */}
+                    {/* <Button variant="contained" color="success" onClick={() => navigate(`/compararpo`, { state: { fileId } })}>Siguiente</Button> */}
+                {/* </Box> */}
             </section>
         </section>
-
-    )
+    );
 }
 
-
-export default CompararPS
+export default CompararPS;

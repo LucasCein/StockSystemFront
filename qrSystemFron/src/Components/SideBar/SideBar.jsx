@@ -101,7 +101,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {userName == "admin" && (
           <>
             <li className="sidebar-list-item" onClick={isMobile ? OpenSidebar : null}>
-              <NavLink to={"/compararps"}>
+              <NavLink to={"/compararplanillas"}>
                 <BsTable className="icon" />{" "}
                 <span className="text-light">Comparar Planillas</span>
               </NavLink>

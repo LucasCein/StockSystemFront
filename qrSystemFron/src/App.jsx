@@ -13,6 +13,7 @@ import CompararPS from './Components/Comparar/CompararPS'
 import CompararPO from './Components/Comparar/CompararPO'
 import Comparar from './Components/Comparar/Comparar'
 import CompararOp from './Components/Comparar/CompararOp'
+import CompararPlanillas from './Components/Comparar/CompararPlanillas'
 
 
 function App() {
@@ -102,6 +103,15 @@ function App() {
               <Header OpenSidebar={OpenSidebar} />
               <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
               <CompararOp></CompararOp>
+            </div>
+            }
+          />
+          <Route
+            path='/compararplanillas'
+            element={<div className='grid-container'>
+              <Header OpenSidebar={OpenSidebar} />
+              <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+              <CompararPlanillas></CompararPlanillas>
             </div>
             }
           />
