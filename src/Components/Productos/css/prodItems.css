@@ -1,0 +1,10 @@
+.value {
+    word-wrap: break-word;
+    hyphens: auto;
+    max-width: 100px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-right: 0;
+    padding-left: 0;
+    /* Ajusta esto según la anchura que desees */
+}
