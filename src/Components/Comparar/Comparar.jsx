@@ -32,8 +32,10 @@ const Comparar = () => {
                 if (row1) {
                     const depositoIndex = columnNames1.indexOf("total");
                     const totalIndex = columnNames2.indexOf("total");
-                    const deposito = Number(row1[depositoIndex]);
-                    const total = Number(row2[totalIndex]);
+                    const deposito = parseInt(row1[depositoIndex]);
+                    console.log('dep',deposito)
+                    const total = parseInt(row2[totalIndex]);
+                    console.log('tot',total)
                     const diferencia = total - deposito;
                     const formattedDiferencia = diferencia < 0 ? `(${Math.abs(diferencia)})` : diferencia;
                     row2.push(formattedDiferencia);
