@@ -651,7 +651,7 @@ const ABMProductos = () => {
               placeholder="Cod. Barras"
               onChange={handleChangeBarras}
               value={producto.codbarras}
-              required
+              
             />
           </div>
         </section>
