@@ -20,7 +20,7 @@ const CompararOp = () => {
     const rowsPerPage = 10;
     const nextPage = () => setCurrentPage(currentPage + 1);
     const prevPage = () => setCurrentPage(currentPage - 1);
-    const currentData = finalProducts.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
+   
 
     useEffect(() => {
         fetch('https://stocksystemback-mxpi.onrender.com/users')
@@ -32,7 +32,7 @@ const CompararOp = () => {
                 console.error(error);
             });
     }, []);
-
+    console.log(users)
     const handleChange = (event) => {
         const { name } = event.target.value;
         setUser(event.target.value);
@@ -79,59 +79,79 @@ const CompararOp = () => {
     });
 
     const handleClick = () => {
-        let finalProduct = [];
-
-        const userProductsMap = new Map();
-        const user2ProductsMap = new Map();
-
-        // Crear mapas para acceder rápidamente a los productos por su código
-        productsUser.forEach(product => userProductsMap.set(product.code, product));
-        productsUser2.forEach(product => user2ProductsMap.set(product.code, product));
-
-        // Recorrer productos de user1
-        productsUser.forEach(product => {
-            const matchedProduct = user2ProductsMap.get(product.code);
-            if (matchedProduct) {
-                // Producto está en ambos
-                finalProduct.push({
-                    "Artículo": product.code,
-                    "Cod. Barras": product.codbarras,
-                    "Nombre": product.name,
-                    "Marca": product.marca,
-                    "Diferencia": parseInt(product.total) - parseInt(matchedProduct.total),
-                    "isExclusive": false // No es exclusivo, aparece en ambos
-                });
-            } else {
-                // Producto solo en user1
-                finalProduct.push({
-                    "Artículo": product.code,
-                    "Cod. Barras": product.codbarras,
-                    "Nombre": product.name,
-                    "Marca": product.marca,
-                    "Diferencia": parseInt(product.total) - 0,
-                    "isExclusive": true // Exclusivo para user1
-                });
+        const fetchProducts = async () => {
+            try {
+                const response1 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`);
+                const data1 = await response1.json();
+                setProductsUser(data1);
+    
+                const response2 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user2.name}`);
+                const data2 = await response2.json();
+                setProductsUser2(data2);
+    
+                return [data1, data2];
+            } catch (error) {
+                console.error("Error al obtener los productos:", error);
+                return [[], []];
             }
+        };
+    
+        fetchProducts().then(([productsUser, productsUser2]) => {
+            let finalProduct = [];
+    
+            const userProductsMap = new Map();
+            const user2ProductsMap = new Map();
+    
+            // Crear mapas para acceder rápidamente a los productos por su código
+            productsUser.forEach(product => userProductsMap.set(product.code, product));
+            productsUser2.forEach(product => user2ProductsMap.set(product.code, product));
+    
+            // Recorrer productos de user1
+            productsUser.forEach(product => {
+                const matchedProduct = user2ProductsMap.get(product.code);
+                if (matchedProduct) {
+                    // Producto está en ambos
+                    finalProduct.push({
+                        "Artículo": product.code,
+                        "Cod. Barras": product.codbarras,
+                        "Nombre": product.name,
+                        "Marca": product.marca,
+                        "Diferencia": parseInt(product.total) - parseInt(matchedProduct.total),
+                        "isExclusive": false // No es exclusivo, aparece en ambos
+                    });
+                } else {
+                    // Producto solo en user1
+                    finalProduct.push({
+                        "Artículo": product.code,
+                        "Cod. Barras": product.codbarras,
+                        "Nombre": product.name,
+                        "Marca": product.marca,
+                        "Diferencia": parseInt(product.total) - 0,
+                        "isExclusive": true // Exclusivo para user1
+                    });
+                }
+            });
+    
+            // Recorrer productos de user2 que no están en user1
+            productsUser2.forEach(product => {
+                if (!userProductsMap.has(product.code)) {
+                    // Producto solo en user2
+                    finalProduct.push({
+                        "Artículo": product.code,
+                        "Cod. Barras": product.codbarras,
+                        "Nombre": product.name,
+                        "Marca": product.marca,
+                        "Diferencia": 0 - parseInt(product.total),
+                        "isExclusive": true // Exclusivo para user2
+                    });
+                }
+            });
+    
+            console.log("Final Products: ", finalProduct);
+            setFinalProducts(finalProduct);
         });
-
-        // Recorrer productos de user2 que no están en user1
-        productsUser2.forEach(product => {
-            if (!userProductsMap.has(product.code)) {
-                // Producto solo en user2
-                finalProduct.push({
-                    "Artículo": product.code,
-                    "Cod. Barras": product.codbarras,
-                    "Nombre": product.name,
-                    "Marca": product.marca,
-                    "Diferencia": 0 - parseInt(product.total),
-                    "isExclusive": true // Exclusivo para user2
-                });
-            }
-        });
-
-        console.log("Final Products: ", finalProduct);
-        setFinalProducts(finalProduct);
     };
+    
 
     const handleDownload = () => {
         const ws = XLSX.utils.json_to_sheet(finalProducts);
@@ -382,7 +402,7 @@ const CompararOp = () => {
         console.error("Error al actualizar o crear el producto:", error);
     }
 };
-    
+    const currentData = finalProducts.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
     return (
         <section>
             <h1 className="text-center text-light mt-3 mb-3">Comparar Planilla Operadores</h1>
