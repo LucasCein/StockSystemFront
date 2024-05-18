@@ -169,9 +169,9 @@ const CompararOp = () => {
 
     const handleRowClick = (row) => {
         const codeprod = row.Artículo;
-        fetch(
-            `https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`
-        )
+    
+        // Fetch for prod1
+        fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Producto no encontrado');
@@ -181,24 +181,68 @@ const CompararOp = () => {
             .then((data) => {
                 setProd1({
                     code: codeprod,
-                    quantityb: data.quantityb,
-                    quantityu: data.quantityu,
-                    unxcaja: data.unxcaja
+                    name: data.name || "Desconocido",
+                    codbarras: data.codbarras || "",
+                    codprov: data.codprov || "",
+                    quantityb: data.quantityb || 0,
+                    quantityu: data.quantityu || 0,
+                    date: data.date || new Date().toISOString().split("T")[0],
+                    idealstock: data.idealstock || 0,
+                    unxcaja: data.unxcaja || 1,
+                    total: parseInt(data.quantityb)* parseInt(data.unxcaja) + parseInt(data.quantityu),
+                    familia: data.familia || "General",
+                    marca: data.marca || "Sin Marca",
+                    username: [user.name]
                 });
             })
             .catch((error) => {
                 console.error(error);
-                setProd1({
-                    code: codeprod,
-                    quantityb: 0,
-                    quantityu: 0,
-                    unxcaja: 0
-                });
+                fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Producto no encontrado');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        setProd1({
+                            code: codeprod,
+                            name: data.name || "Desconocido",
+                            codbarras: data.codbarras || "",
+                            codprov: data.codprov || "",
+                            quantityb: 0,
+                            quantityu: 0,
+                            date: data.date || new Date().toISOString().split("T")[0],
+                            idealstock: data.idealstock || 0,
+                            unxcaja: data.unxcaja || 1,
+                            total: 0,
+                            familia: data.familia || "General",
+                            marca: data.marca || "Sin Marca",
+                            username: [user.name]
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        setProd1({
+                            code: codeprod,
+                            name: "Desconocido",
+                            codbarras: "",
+                            codprov: "",
+                            quantityb: 0,
+                            quantityu: 0,
+                            date: new Date().toISOString().split("T")[0],
+                            idealstock: 0,
+                            unxcaja: 1,
+                            total: 0,
+                            familia: "General",
+                            marca: "Sin Marca",
+                            username: [user.name]
+                        });
+                    });
             });
-
-        fetch(
-            `https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`
-        )
+    
+        // Fetch for prod2
+        fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Producto no encontrado');
@@ -208,50 +252,137 @@ const CompararOp = () => {
             .then((data) => {
                 setProd2({
                     code: codeprod,
-                    quantityb: data.quantityb,
-                    quantityu: data.quantityu,
-                    unxcaja: data.unxcaja
+                    name: data.name || "Desconocido",
+                    codbarras: data.codbarras || "",
+                    codprov: data.codprov || "",
+                    quantityb: data.quantityb || 0,
+                    quantityu: data.quantityu || 0,
+                    date: data.date || new Date().toISOString().split("T")[0],
+                    idealstock: data.idealstock || 0,
+                    unxcaja: data.unxcaja || 1,
+                    total: parseInt(data.quantityb)* parseInt(data.unxcaja) + parseInt(data.quantityu),
+                    familia: data.familia || "General",
+                    marca: data.marca || "Sin Marca",
+                    username: [user2.name]
                 });
             })
             .catch((error) => {
                 console.error(error);
-                setProd2({
-                    code: codeprod,
-                    quantityb: 0,
-                    quantityu: 0,
-                    unxcaja: 0
-                });
+                fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Producto no encontrado');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        setProd2({
+                            code: codeprod,
+                            name: data.name || "Desconocido",
+                            codbarras: data.codbarras || "",
+                            codprov: data.codprov || "",
+                            quantityb:0,
+                            quantityu: 0,
+                            date: data.date || new Date().toISOString().split("T")[0],
+                            idealstock: data.idealstock || 0,
+                            unxcaja: data.unxcaja || 1,
+                            total: 0,
+                            familia: data.familia || "General",
+                            marca: data.marca || "Sin Marca",
+                            username: [user2.name]
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        setProd2({
+                            code: codeprod,
+                            name: "Desconocido",
+                            codbarras: "",
+                            codprov: "",
+                            quantityb: 0,
+                            quantityu: 0,
+                            date: new Date().toISOString().split("T")[0],
+                            idealstock: 0,
+                            unxcaja: 1,
+                            total: 0,
+                            familia: "General",
+                            marca: "Sin Marca",
+                            username: [user2.name]
+                        });
+                    });
             });
     };
-
-    const handleUpdateProd = async (user, prod) => {
-        console.log(user)
-        console.log(prod)
-        try {
-            const respuesta = await fetch(
-                `https://stocksystemback-mxpi.onrender.com/products/edit/${prod.code}/${user.name}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ quantityb: prod.quantityb, quantityu: prod.quantityu, total: parseInt(prod.quantityb) * parseInt(prod.unxcaja) + parseInt(prod.quantityu) }),
-                }
-            );
-
-            if (!respuesta.ok) {
-                throw new Error(`HTTP error! status: ${respuesta.status}`);
+    
+    const handleUpdateProd = async (user, prod, newProd) => {
+    console.log(user);
+    console.log(prod);
+    try {
+        const response = await fetch(
+            `https://stocksystemback-mxpi.onrender.com/products/edit/${prod.code}/${user.name}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    quantityb: prod.quantityb,
+                    quantityu: prod.quantityu,
+                    total: parseInt(prod.quantityb) * parseInt(prod.unxcaja) + parseInt(prod.quantityu)
+                }),
             }
+        );
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                // Si el producto no existe, lo creamos
+                console.log('prod1', prod1);
+                console.log('prod2', prod2);
+                const newProduct = newProd === 'prod1' ? prod1 : prod2;
+                const createResponse = await fetch(
+                    `https://stocksystemback-mxpi.onrender.com/products`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(newProduct),
+                    }
+                );
+
+                if (!createResponse.ok) {
+                    throw new Error(`HTTP error! status: ${createResponse.status}`);
+                }
+                const MySwal = withReactContent(Swal);
+                MySwal.fire({
+                    title: <strong>Producto creado con éxito!</strong>,
+                    icon: "success",
+                });
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } else {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
-                title: <strong>Se ha actualizado con Exito!</strong>,
+                title: <strong>Se ha actualizado con éxito!</strong>,
                 icon: "success",
             });
-        } catch (error) {
-            console.error("Error al actualizar el producto:", error);
         }
-    };
 
+        // Actualizar la tabla después de actualizar o crear el producto
+        const updatedProducts = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error al actualizar la tabla:', error);
+                return [];
+            });
+
+        setFinalProducts(updatedProducts);
+
+    } catch (error) {
+        console.error("Error al actualizar o crear el producto:", error);
+    }
+};
+    
     return (
         <section>
             <h1 className="text-center text-light mt-3 mb-3">Comparar Planilla Operadores</h1>
@@ -261,13 +392,13 @@ const CompararOp = () => {
                     <section className="d-flex gap-2 align-items-center jus w-50">
                         <section className="d-flex flex-column">
                             <label className="text-light">Unidades:</label>
-                            <input type="number" placeholder="unidades" value={prod1?.quantityu} onChange={e => setProd1({ ...prod1, quantityu: parseInt(e.target.value) })} />
+                            <input type="number" placeholder="unidades" value={parseInt(prod1?.quantityu)} onChange={e => setProd1({ ...prod1, quantityu: parseInt(e.target.value), total: parseInt(prod1.quantityb)* parseInt(prod1.unxcaja) + parseInt(e.target.value), })} />
                         </section>
                         <section>
                             <label className="text-light">Bultos:</label>
-                            <input type="number" placeholder="bultos" value={prod1?.quantityb} onChange={e => setProd1({ ...prod1, quantityb: parseInt(e.target.value) })} />
+                            <input type="number" placeholder="bultos" value={parseInt(prod1?.quantityb)} onChange={e => setProd1({ ...prod1, quantityb: parseInt(e.target.value), total: parseInt(e.target.value)* parseInt(prod1.unxcaja) + parseInt(prod1.quantityu), })} />
                         </section>
-                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user, prod1)}><BsCloudUpload size={24} /></button>
+                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user, prod1,'prod1')}><BsCloudUpload size={24} /></button>
                     </section>
                 </section>
                 <section className="d-flex  align-items-center mt-3">
@@ -341,13 +472,13 @@ const CompararOp = () => {
                     <section className="d-flex gap-2 align-items-center  w-50">
                         <section className="d-flex flex-column">
                             <label className="text-light">Unidades:</label>
-                            <input type="number" placeholder="unidades" value={prod2?.quantityu} onChange={e => setProd2({ ...prod2, quantityu: parseInt(e.target.value) })} />
+                            <input type="number" placeholder="unidades" value={parseInt(prod2?.quantityu)} onChange={e => setProd2({ ...prod2, quantityu: parseInt(e.target.value), total: parseInt(prod2.quantityb)* parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
                         </section>
                         <section>
                             <label className="text-light">Bultos:</label>
-                            <input type="number" placeholder="bultos" value={prod2?.quantityb} onChange={e => setProd2({ ...prod2, quantityb: parseInt(e.target.value) })} />
+                            <input type="number" placeholder="bultos" value={parseInt(prod2?.quantityb)} onChange={e => setProd2({ ...prod2, quantityb: parseInt(e.target.value), total: parseInt(prod2.quantityb)* parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
                         </section>
-                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user2, prod2)}><BsCloudUpload size={24} /></button>
+                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user2, prod2,'prod2')}><BsCloudUpload size={24} /></button>
                     </section>
                 </section>
             </section>
@@ -390,6 +521,7 @@ const CompararOp = () => {
             </section>
         </section>
     );
-};
-
-export default CompararOp;
+    };
+    
+    export default CompararOp;
+    
