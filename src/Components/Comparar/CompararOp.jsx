@@ -17,10 +17,10 @@ const CompararOp = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [prod1, setProd1] = useState([]);
     const [prod2, setProd2] = useState([]);
+    const [exportRequested, setExportRequested] = useState(false);
     const rowsPerPage = 10;
     const nextPage = () => setCurrentPage(currentPage + 1);
     const prevPage = () => setCurrentPage(currentPage - 1);
-   
 
     useEffect(() => {
         fetch('https://stocksystemback-mxpi.onrender.com/users')
@@ -32,11 +32,10 @@ const CompararOp = () => {
                 console.error(error);
             });
     }, []);
-    console.log(users)
+
     const handleChange = (event) => {
         const { name } = event.target.value;
         setUser(event.target.value);
-        console.log(name);
 
         try {
             fetch(`https://stocksystemback-mxpi.onrender.com/products/${name}`)
@@ -84,84 +83,90 @@ const CompararOp = () => {
                 const response1 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`);
                 const data1 = await response1.json();
                 setProductsUser(data1);
-    
+
                 const response2 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user2.name}`);
                 const data2 = await response2.json();
                 setProductsUser2(data2);
-    
+
                 return [data1, data2];
             } catch (error) {
                 console.error("Error al obtener los productos:", error);
                 return [[], []];
             }
         };
-    
+
         fetchProducts().then(([productsUser, productsUser2]) => {
             let finalProduct = [];
-    
+
             const userProductsMap = new Map();
             const user2ProductsMap = new Map();
-    
+
             // Crear mapas para acceder rápidamente a los productos por su código
             productsUser.forEach(product => userProductsMap.set(product.code, product));
             productsUser2.forEach(product => user2ProductsMap.set(product.code, product));
-    
+
             // Recorrer productos de user1
             productsUser.forEach(product => {
                 const matchedProduct = user2ProductsMap.get(product.code);
                 if (matchedProduct) {
                     // Producto está en ambos
                     finalProduct.push({
-                        "Artículo": product.code,
-                        "Cod. Barras": product.codbarras,
-                        "Nombre": product.name,
-                        "Marca": product.marca,
-                        "Diferencia": parseInt(product.total) - parseInt(matchedProduct.total),
-                        "isExclusive": false // No es exclusivo, aparece en ambos
+                        code: product.code,
+                        codbarras: product.codbarras,
+                        name: product.name,
+                        marca: product.marca,
+                        unxcaja: product.unxcaja,
+                        quantityb: product.quantityb,
+                        quantityu: product.quantityu,
+                        total: parseInt(product.quantityb) * parseInt(product.unxcaja) + parseInt(product.quantityu),
+                        diferencia: parseInt(product.total) - parseInt(matchedProduct.total),
+                        isExclusive: false // No es exclusivo, aparece en ambos
                     });
                 } else {
                     // Producto solo en user1
                     finalProduct.push({
-                        "Artículo": product.code,
-                        "Cod. Barras": product.codbarras,
-                        "Nombre": product.name,
-                        "Marca": product.marca,
-                        "Diferencia": parseInt(product.total) - 0,
-                        "isExclusive": true // Exclusivo para user1
+                        code: product.code,
+                        codbarras: product.codbarras,
+                        name: product.name,
+                        marca: product.marca,
+                        unxcaja: product.unxcaja,
+                        quantityb: product.quantityb,
+                        quantityu: product.quantityu,
+                        total: parseInt(product.quantityb) * parseInt(product.unxcaja) + parseInt(product.quantityu),
+                        diferencia: parseInt(product.total) - 0,
+                        isExclusive: true // Exclusivo para user1
                     });
                 }
             });
-    
+
             // Recorrer productos de user2 que no están en user1
             productsUser2.forEach(product => {
                 if (!userProductsMap.has(product.code)) {
                     // Producto solo en user2
                     finalProduct.push({
-                        "Artículo": product.code,
-                        "Cod. Barras": product.codbarras,
-                        "Nombre": product.name,
-                        "Marca": product.marca,
-                        "Diferencia": 0 - parseInt(product.total),
-                        "isExclusive": true // Exclusivo para user2
+                        code: product.code,
+                        codbarras: product.codbarras,
+                        name: product.name,
+                        marca: product.marca,
+                        unxcaja: product.unxcaja,
+                        quantityb: product.quantityb,
+                        quantityu: product.quantityu,
+                        total: parseInt(product.quantityb) * parseInt(product.unxcaja) + parseInt(product.quantityu),
+                        diferencia: 0 - parseInt(product.total),
+                        isExclusive: true // Exclusivo para user2
                     });
                 }
             });
-    
-            console.log("Final Products: ", finalProduct);
-            setFinalProducts(finalProduct);
-        });
-    };
-    
 
-    const handleDownload = () => {
-        const ws = XLSX.utils.json_to_sheet(finalProducts);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Comparison");
-        XLSX.writeFile(wb, "ComparisonReport.xlsx");
+            setFinalProducts(finalProduct);
+            if (exportRequested) {
+                exportToExcel(finalProduct, "Plantilla Limpia");
+                setExportRequested(false);
+            }
+        });
     };
 
     const prepararDatosParaExcel = (productos) => {
-        console.log(productos);
         const datosExcel = productos.map(item => ({
             Artículo: item.code,
             EAN: item.codbarras,
@@ -188,8 +193,8 @@ const CompararOp = () => {
     };
 
     const handleRowClick = (row) => {
-        const codeprod = row.Artículo;
-    
+        const codeprod = row.code;
+
         // Fetch for prod1
         fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`)
             .then((response) => {
@@ -209,7 +214,7 @@ const CompararOp = () => {
                     date: data.date || new Date().toISOString().split("T")[0],
                     idealstock: data.idealstock || 0,
                     unxcaja: data.unxcaja || 1,
-                    total: parseInt(data.quantityb)* parseInt(data.unxcaja) + parseInt(data.quantityu),
+                    total: parseInt(data.quantityb) * parseInt(data.unxcaja) + parseInt(data.quantityu),
                     familia: data.familia || "General",
                     marca: data.marca || "Sin Marca",
                     username: [user.name]
@@ -260,7 +265,7 @@ const CompararOp = () => {
                         });
                     });
             });
-    
+
         // Fetch for prod2
         fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`)
             .then((response) => {
@@ -280,7 +285,7 @@ const CompararOp = () => {
                     date: data.date || new Date().toISOString().split("T")[0],
                     idealstock: data.idealstock || 0,
                     unxcaja: data.unxcaja || 1,
-                    total: parseInt(data.quantityb)* parseInt(data.unxcaja) + parseInt(data.quantityu),
+                    total: parseInt(data.quantityb) * parseInt(data.unxcaja) + parseInt(data.quantityu),
                     familia: data.familia || "General",
                     marca: data.marca || "Sin Marca",
                     username: [user2.name]
@@ -301,14 +306,14 @@ const CompararOp = () => {
                             name: data.name || "Desconocido",
                             codbarras: data.codbarras || "",
                             codprov: data.codprov || "",
-                            quantityb:0,
+                            quantityb: 0,
                             quantityu: 0,
                             date: data.date || new Date().toISOString().split("T")[0],
                             idealstock: data.idealstock || 0,
                             unxcaja: data.unxcaja || 1,
                             total: 0,
-                            familia: data.familia || "General",
-                            marca: data.marca || "Sin Marca",
+                            familia: "General",
+                            marca: "Sin Marca",
                             username: [user2.name]
                         });
                     })
@@ -332,77 +337,87 @@ const CompararOp = () => {
                     });
             });
     };
-    
+
     const handleUpdateProd = async (user, prod, newProd) => {
-    console.log(user);
-    console.log(prod);
-    try {
-        const response = await fetch(
-            `https://stocksystemback-mxpi.onrender.com/products/edit/${prod.code}/${user.name}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    quantityb: prod.quantityb,
-                    quantityu: prod.quantityu,
-                    total: parseInt(prod.quantityb) * parseInt(prod.unxcaja) + parseInt(prod.quantityu)
-                }),
-            }
-        );
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                // Si el producto no existe, lo creamos
-                console.log('prod1', prod1);
-                console.log('prod2', prod2);
-                const newProduct = newProd === 'prod1' ? prod1 : prod2;
-                const createResponse = await fetch(
-                    `https://stocksystemback-mxpi.onrender.com/products`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(newProduct),
-                    }
-                );
-
-                if (!createResponse.ok) {
-                    throw new Error(`HTTP error! status: ${createResponse.status}`);
+        try {
+            const response = await fetch(
+                `https://stocksystemback-mxpi.onrender.com/products/edit/${prod.code}/${user.name}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        quantityb: prod.quantityb,
+                        quantityu: prod.quantityu,
+                        total: parseInt(prod.quantityb) * parseInt(prod.unxcaja) + parseInt(prod.quantityu)
+                    }),
                 }
+            );
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    // Si el producto no existe, lo creamos
+                    const newProduct = newProd === 'prod1' ? prod1 : prod2;
+                    const createResponse = await fetch(
+                        `https://stocksystemback-mxpi.onrender.com/products`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(newProduct),
+                        }
+                    );
+
+                    if (!createResponse.ok) {
+                        throw new Error(`HTTP error! status: ${createResponse.status}`);
+                    }
+                    const MySwal = withReactContent(Swal);
+                    MySwal.fire({
+                        title: <strong>Producto creado con éxito!</strong>,
+                        icon: "success",
+                    });
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } else {
                 const MySwal = withReactContent(Swal);
                 MySwal.fire({
-                    title: <strong>Producto creado con éxito!</strong>,
+                    title: <strong>Se ha actualizado con éxito!</strong>,
                     icon: "success",
                 });
-            } else {
-                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        } else {
-            const MySwal = withReactContent(Swal);
-            MySwal.fire({
-                title: <strong>Se ha actualizado con éxito!</strong>,
-                icon: "success",
-            });
+
+            // Actualizar la tabla después de actualizar o crear el producto
+            const updatedProducts = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`)
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Error al actualizar la tabla:', error);
+                    return [];
+                });
+
+            setFinalProducts(updatedProducts);
+
+        } catch (error) {
+            console.error("Error al actualizar o crear el producto:", error);
         }
+    };
 
-        // Actualizar la tabla después de actualizar o crear el producto
-        const updatedProducts = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`)
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error al actualizar la tabla:', error);
-                return [];
-            });
+    useEffect(() => {
+        if (exportRequested) {
+            exportToExcel(finalProducts, "Plantilla Limpia");
+            setExportRequested(false);
+        }
+    }, [finalProducts, exportRequested]);
 
-        setFinalProducts(updatedProducts);
+    const handleExport = () => {
+        setExportRequested(true);
+        handleClick();
+    };
 
-    } catch (error) {
-        console.error("Error al actualizar o crear el producto:", error);
-    }
-};
     const currentData = finalProducts.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
+
     return (
         <section>
             <h1 className="text-center text-light mt-3 mb-3">Comparar Planilla Operadores</h1>
@@ -412,13 +427,13 @@ const CompararOp = () => {
                     <section className="d-flex gap-2 align-items-center jus w-50">
                         <section className="d-flex flex-column">
                             <label className="text-light">Unidades:</label>
-                            <input type="number" placeholder="unidades" value={parseInt(prod1?.quantityu)} onChange={e => setProd1({ ...prod1, quantityu: parseInt(e.target.value), total: parseInt(prod1.quantityb)* parseInt(prod1.unxcaja) + parseInt(e.target.value), })} />
+                            <input type="number" placeholder="unidades" value={parseInt(prod1?.quantityu)} onChange={e => setProd1({ ...prod1, quantityu: parseInt(e.target.value), total: parseInt(prod1.quantityb) * parseInt(prod1.unxcaja) + parseInt(e.target.value), })} />
                         </section>
                         <section>
                             <label className="text-light">Bultos:</label>
-                            <input type="number" placeholder="bultos" value={parseInt(prod1?.quantityb)} onChange={e => setProd1({ ...prod1, quantityb: parseInt(e.target.value), total: parseInt(e.target.value)* parseInt(prod1.unxcaja) + parseInt(prod1.quantityu), })} />
+                            <input type="number" placeholder="bultos" value={parseInt(prod1?.quantityb)} onChange={e => setProd1({ ...prod1, quantityb: parseInt(e.target.value), total: parseInt(e.target.value) * parseInt(prod1.unxcaja) + parseInt(prod1.quantityu), })} />
                         </section>
-                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user, prod1,'prod1')}><BsCloudUpload size={24} /></button>
+                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user, prod1, 'prod1')}><BsCloudUpload size={24} /></button>
                     </section>
                 </section>
                 <section className="d-flex  align-items-center mt-3">
@@ -492,13 +507,13 @@ const CompararOp = () => {
                     <section className="d-flex gap-2 align-items-center  w-50">
                         <section className="d-flex flex-column">
                             <label className="text-light">Unidades:</label>
-                            <input type="number" placeholder="unidades" value={parseInt(prod2?.quantityu)} onChange={e => setProd2({ ...prod2, quantityu: parseInt(e.target.value), total: parseInt(prod2.quantityb)* parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
+                            <input type="number" placeholder="unidades" value={parseInt(prod2?.quantityu)} onChange={e => setProd2({ ...prod2, quantityu: parseInt(e.target.value), total: parseInt(prod2.quantityb) * parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
                         </section>
                         <section>
                             <label className="text-light">Bultos:</label>
-                            <input type="number" placeholder="bultos" value={parseInt(prod2?.quantityb)} onChange={e => setProd2({ ...prod2, quantityb: parseInt(e.target.value), total: parseInt(prod2.quantityb)* parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
+                            <input type="number" placeholder="bultos" value={parseInt(prod2?.quantityb)} onChange={e => setProd2({ ...prod2, quantityb: parseInt(e.target.value), total: parseInt(prod2.quantityb) * parseInt(prod2.unxcaja) + parseInt(e.target.value) })} />
                         </section>
-                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user2, prod2,'prod2')}><BsCloudUpload size={24} /></button>
+                        <button className="btn btn-primary mt-4" onClick={() => handleUpdateProd(user2, prod2, 'prod2')}><BsCloudUpload size={24} /></button>
                     </section>
                 </section>
             </section>
@@ -520,11 +535,11 @@ const CompararOp = () => {
                         <TableBody>
                             {currentData.map((row, index) => (
                                 <TableRow key={index} onClick={() => handleRowClick(row)} style={{ cursor: 'pointer', backgroundColor: row.isExclusive ? 'red' : 'inherit' }}>
-                                    <TableCell>{row["Artículo"]}</TableCell>
-                                    <TableCell>{row["Cod. Barras"]}</TableCell>
-                                    <TableCell>{row["Nombre"]}</TableCell>
-                                    <TableCell>{row["Marca"]}</TableCell>
-                                    <TableCell>{row["Diferencia"]}</TableCell>
+                                    <TableCell>{row.code}</TableCell>
+                                    <TableCell>{row.codbarras}</TableCell>
+                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell>{row.marca}</TableCell>
+                                    <TableCell>{row.diferencia}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -536,12 +551,10 @@ const CompararOp = () => {
                 </section>
             </section>
             <section className="d-flex justify-content-center mt-5 gap-5 mb-5">
-                {/* <Button variant="contained" onClick={handleDownload}>Descargar</Button> */}
-                <Button variant="contained" onClick={() => exportToExcel(finalProducts, "Plantilla Limpia")}>Plantilla Limpia</Button>
+                <Button variant="contained" onClick={handleExport}>Plantilla Limpia</Button>
             </section>
         </section>
     );
-    };
-    
-    export default CompararOp;
-    
+};
+
+export default CompararOp;
