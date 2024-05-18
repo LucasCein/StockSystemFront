@@ -192,6 +192,28 @@ const CompararOp = () => {
         FileSaver.saveAs(data, fileName + fileExtension);
     };
 
+    const prepararDatosParaExcel2 = (productos) => {
+        const datosExcel = productos.map(item => ({
+            Artículo: item.code,
+            EAN: item.codbarras,
+            Descripción: item.name,
+            Marca: item.marca,
+            Diferencia:item.diferencia
+        }));
+        return datosExcel;
+    };
+    const exportToExcel2 = (apiData, fileName) => {
+        const datosParaExcel = prepararDatosParaExcel2(apiData);
+        const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+        const fileExtension = ".xlsx";
+
+        const ws = XLSX.utils.json_to_sheet(datosParaExcel);
+        const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, fileName + fileExtension);
+    };
+
     const handleRowClick = (row) => {
         const codeprod = row.code;
 
@@ -551,8 +573,10 @@ const CompararOp = () => {
                 </section>
             </section>
             <section className="d-flex justify-content-center mt-5 gap-5 mb-5">
+                <Button variant="contained" onClick={()=>exportToExcel2(finalProducts,'Comp. Operadores')}>Comp. Operadores</Button>
                 <Button variant="contained" onClick={handleExport}>Plantilla Limpia</Button>
             </section>
+            
         </section>
     );
 };
