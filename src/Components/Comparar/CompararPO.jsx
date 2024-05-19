@@ -57,8 +57,8 @@ const CompararPO = () => {
       headers: headers,
       data: aggregatedData
     };
-
-    fetch('https://stocksystemback-mxpi.onrender.com/comparar/json', {
+    console.log(data)
+    fetch('https://stocksystemback-mxpi.onrender.com/comparar/planillaoperador', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -27,12 +27,23 @@ const CompararPS = () => {
         const worksheet = workbook.Sheets[worksheetName];
         const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         setData(json);
-        const formData = new FormData();
-        formData.append('file', file);
 
-        fetch('https://stocksystemback-mxpi.onrender.com/comparar', {
+        // Prepare data for backend
+        const rows = json.slice(1).map(row => ({
+            code: row[0],
+            codbarras: row[1],
+            descripcion: row[2],
+            marca: row[3],
+            unxcaja: row[4],
+            total: row[5],
+        }));
+        console.log(rows)
+        fetch("https://stocksystemback-mxpi.onrender.com/comparar/planillasistema", {
             method: 'POST',
-            body: formData,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(rows),
         })
             .then(response => response.json())
             .then(data => {

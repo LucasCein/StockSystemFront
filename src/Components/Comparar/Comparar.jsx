@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import * as XLSX from 'xlsx';
 import { PlanillasContext } from "./PlanillasContext";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box } from '@mui/material';
 import CustomSpinner from "../CustomSpinner/CustomSpinner";
+import * as XLSX from 'xlsx';
 
 const Comparar = () => {
     const { fileId, fileId2 } = useContext(PlanillasContext);
@@ -12,48 +12,66 @@ const Comparar = () => {
 
     useEffect(() => {
         Promise.all([
-            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/${fileId}`).then(res => res.arrayBuffer()),
-            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/json/${fileId2}`).then(res => res.json())
-        ]).then(([data1, jsonData2]) => {
-            const wb1 = XLSX.read(data1, { type: 'buffer' });
-
-            const ws1 = wb1.Sheets[wb1.SheetNames[0]];
-            const jsonData1 = XLSX.utils.sheet_to_json(ws1, { header: 1 });
-
-            const columnNames1 = jsonData1.shift();
-            const columnNames2 = jsonData2.headers;
+            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/planillasistema`).then(res => res.json()),
+            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/planillaoperador`).then(res => res.json())
+        ]).then(([data1, data2]) => {
+            const columnsToExclude = ['quantityu', 'quanitityb', 'total'];
+            const columnNames1 = Object.keys(data1[0]).filter(col => !columnsToExclude.includes(col));
+            const columnNames2 = Object.keys(data2[0]).filter(col => !columnsToExclude.includes(col));
             columnNames2.push("diferencia");
 
-            const newRows = jsonData2.data.map((row2, index) => {
-                const itemIndex = columnNames2.indexOf("Artículo");
-                const item = row2[itemIndex];
-                const row1 = jsonData1.find(r => r[columnNames1.indexOf("Artículo")] === item);
+            const newRows = data2.map((row2) => {
+                const item = row2["code"];
+                const row1 = data1.find(r => r["code"] === item);
 
                 if (row1) {
-                    const depositoIndex = columnNames1.indexOf("total");
-                    const totalIndex = columnNames2.indexOf("total");
-                    const deposito = parseInt(row1[depositoIndex]);
-                    console.log('dep',deposito)
-                    const total = parseInt(row2[totalIndex]);
-                    console.log('tot',total)
+                    const deposito = parseInt(row1["total"]);
+                    const total = parseInt(row2["total"]);
                     const diferencia = total - deposito;
                     const formattedDiferencia = diferencia < 0 ? `(${Math.abs(diferencia)})` : diferencia;
-                    row2.push(formattedDiferencia);
+                    row2["diferencia"] = formattedDiferencia;
                 } else {
-                    row2.push("");
+                    row2["diferencia"] = "";
                 }
                 return row2;
             });
 
             setExcelData([columnNames2, ...newRows]);
-        }).catch(error => console.error('Error fetching the files:', error));
-    }, [fileId, fileId2]);
+        }).catch(error => console.error('Error fetching the data:', error));
+    }, []);
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
+        const columnsToExclude = ['planillaoperadorid','quantityu', 'quanitityb', 'total'];
+        const headers = excelData[0].filter(col => !columnsToExclude.includes(col));
+        const filteredData = excelData.slice(1).map(row => {
+            const filteredRow = {};
+            headers.forEach(header => {
+                filteredRow[header] = row[header];
+            });
+            return filteredRow;
+        });
+
         const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(excelData);
+        const ws = XLSX.utils.json_to_sheet(filteredData, { header: headers });
         XLSX.utils.book_append_sheet(wb, ws, "Results");
         XLSX.writeFile(wb, "Resultados.xlsx");
+
+        // Clear data in the backend after downloading the file
+        fetch('https://stocksystemback-mxpi.onrender.com/comparar/clear-data', {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to clear data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data.message); // Optional: Show a success message
+        })
+        .catch(error => {
+            console.error('Error clearing data:', error);
+        });
     };
 
     const nextPage = () => setCurrentPage(currentPage + 1);
@@ -79,10 +97,10 @@ const Comparar = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {currentData.slice(1).map((row, rowIndex) => (
+                                    {currentData.map((row, rowIndex) => (
                                         <TableRow key={rowIndex}>
-                                            {row.map((cell, cellIndex) => (
-                                                <TableCell key={cellIndex}>{cell}</TableCell>
+                                            {excelData[0].map((header, cellIndex) => (
+                                                <TableCell key={cellIndex}>{row[header]}</TableCell>
                                             ))}
                                         </TableRow>
                                     ))}
