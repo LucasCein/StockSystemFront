@@ -19,7 +19,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = currentPage * itemsPerPage;
     let currentItems = productos.slice(startIndex, endIndex);
-
+    const {back} = useContext(ProvRouteContext)
     const handlePreviousPage = () => {
         setCurrentPage(Math.max(currentPage - 1, 1));
     };
@@ -52,7 +52,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la eliminación
                 if (userName == 'admin') {
-                    fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin/${productid}`, {
+                    fetch(`${back}/productos/admin/${productid}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
                 }
                 else {
 
-                    fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${productid}`, {
+                    fetch(`${back}/products/edit/${productid}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ const ProductosItems = ({ productos, actualizarListaProductos }) => {
 
 
     const getQR = async (productid) => {
-        const response = await fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${productid}`);
+        const response = await fetch(`${back}/products/edit/${productid}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

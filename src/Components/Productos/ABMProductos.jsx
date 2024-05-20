@@ -31,6 +31,8 @@ const ABMProductos = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [aux, setAux] = useState("");
   const typingTimeout = useRef(null);
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:4120904708.
+  const {back}= useContext(ProvRouteContext)
   const [producto, setProducto] = useState({
     name: "",
     code: "",
@@ -69,19 +71,19 @@ const ABMProductos = () => {
     };
   }, []);
   useEffect(() => {
-    fetch("https://stocksystemback-mxpi.onrender.com/products/suggest")
+    fetch(`${back}/products/suggest`)
       .then((response) => response.json())
       .then((data) => setArticulos(data))
       .catch((error) => console.error(error));
   }, []);
   useEffect(() => {
     if (userName.includes("admin")) {
-      fetch("https://stocksystemback-mxpi.onrender.com/productos/admin")
+      fetch(`${back}/productos/admin`)
         .then((response) => response.json())
         .then((data) => setProductos(data))
         .catch((error) => console.error(error));
     } else {
-      fetch(`https://stocksystemback-mxpi.onrender.com/products/${userName}`)
+      fetch(`${back}/products/${userName}`)
         .then((response) => response.json())
         .then((data) => setProductos(data))
         .catch((error) => console.error(error));
@@ -93,7 +95,7 @@ const ABMProductos = () => {
     if (productid) {
       if (userName == "admin") {
         fetch(
-          `https://stocksystemback-mxpi.onrender.com/productos/admin/${
+          `${back}/productos/admin/${
             idprod == 0 ? productid : idprod
           }`
         )
@@ -113,7 +115,7 @@ const ABMProductos = () => {
           });
       } else {
         fetch(
-          `https://stocksystemback-mxpi.onrender.com/products/edit/${
+          `${back}/products/edit/${
             idprod == 0 ? productid : idprod
           }`
         )
@@ -143,7 +145,7 @@ const ABMProductos = () => {
   console.log(userName);
   const actualizarListaProductos = () => {
     // Llamada a la API para obtener la lista actualizada
-    fetch("https://stocksystemback-mxpi.onrender.com/products")
+    fetch(`${back}/products`)
       .then((response) => response.json())
       .then((data) => {
         setProductos(data);
@@ -362,7 +364,7 @@ const ABMProductos = () => {
       if (userName == "admin") {
         try {
           const respuesta = await fetch(
-            `https://stocksystemback-mxpi.onrender.com/productos/admin`,
+            `${back}/productos/admin`,
             {
               method: "PUT",
               headers: {
@@ -393,7 +395,7 @@ const ABMProductos = () => {
       } else {
         try {
           const respuesta = await fetch(
-            `https://stocksystemback-mxpi.onrender.com/products`,
+            `${back}/products`,
             {
               method: "PUT",
               headers: {
@@ -448,7 +450,7 @@ const ABMProductos = () => {
           };
           try {
             const respuesta = await fetch(
-              `https://stocksystemback-mxpi.onrender.com/productos/admin`,
+              `${back}/productos/admin`,
               {
                 method: "PUT",
                 headers: {
@@ -479,7 +481,7 @@ const ABMProductos = () => {
         }
         try {
           const respuesta = await fetch(
-            "https://stocksystemback-mxpi.onrender.com/productos/admin",
+            `${back}/productos/admin`,
             {
               method: "POST",
               headers: {
@@ -541,7 +543,7 @@ const ABMProductos = () => {
           };
           try {
             const respuesta = await fetch(
-              `https://stocksystemback-mxpi.onrender.com/products`,
+              `${back}/products`,
               {
                 method: "PUT",
                 headers: {
@@ -573,7 +575,7 @@ const ABMProductos = () => {
         else{
           try {
             const respuesta = await fetch(
-              "https://stocksystemback-mxpi.onrender.com/products",
+              `${back}/products`,
               {
                 method: "POST",
                 headers: {

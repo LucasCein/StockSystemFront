@@ -10,6 +10,7 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import { PlanillasContext } from "./PlanillasContext";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const CompararPS = () => {
     const [data, setData] = useState([]);
@@ -18,7 +19,7 @@ const CompararPS = () => {
     const rowsPerPage = 15; // Número de filas por página
     const navigate = useNavigate();
     const toast = useRef(null);
-
+    const back=useContext(ProvRouteContext)
     const handleFileUpload = async (event) => {
         const file = event.files[0];
         const data = await file.arrayBuffer();
@@ -38,7 +39,7 @@ const CompararPS = () => {
             total: row[5],
         }));
         console.log(rows)
-        fetch("https://stocksystemback-mxpi.onrender.com/comparar/planillasistema", {
+        fetch(`${back}/comparar/planillasistema`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

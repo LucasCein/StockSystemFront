@@ -1,11 +1,13 @@
 import { ThemeProvider } from "@emotion/react";
 import { FormControl, InputLabel, MenuItem, Select, createTheme, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
 import FileSaver from "file-saver";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BsCloudUpload, BsCloudUploadFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import * as XLSX from 'xlsx';
+import { PlanillasContext } from "./PlanillasContext";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const CompararOp = () => {
     const [users, setUsers] = useState([]);
@@ -21,9 +23,9 @@ const CompararOp = () => {
     const rowsPerPage = 10;
     const nextPage = () => setCurrentPage(currentPage + 1);
     const prevPage = () => setCurrentPage(currentPage - 1);
-
+    const {back} = useContext(ProvRouteContext)
     useEffect(() => {
-        fetch('https://stocksystemback-mxpi.onrender.com/users')
+        fetch(`${back}/users`)
             .then(response => response.json())
             .then(data => {
                 setUsers(data);
@@ -38,7 +40,7 @@ const CompararOp = () => {
         setUser(event.target.value);
 
         try {
-            fetch(`https://stocksystemback-mxpi.onrender.com/products/${name}`)
+            fetch(`${back}/products/${name}`)
                 .then(response => response.json())
                 .then(data => {
                     setProductsUser(data);
@@ -55,7 +57,7 @@ const CompararOp = () => {
         setUser2(event.target.value);
         const { name } = event.target.value;
         try {
-            fetch(`https://stocksystemback-mxpi.onrender.com/products/${name}`)
+            fetch(`${back}/products/${name}`)
                 .then(response => response.json())
                 .then(data => {
                     setProductsUser2(data);
@@ -80,11 +82,11 @@ const CompararOp = () => {
     const handleClick = () => {
         const fetchProducts = async () => {
             try {
-                const response1 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`);
+                const response1 = await fetch(`${back}/products/${user.name}`);
                 const data1 = await response1.json();
                 setProductsUser(data1);
 
-                const response2 = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user2.name}`);
+                const response2 = await fetch(`${back}/products/${user2.name}`);
                 const data2 = await response2.json();
                 setProductsUser2(data2);
 
@@ -218,7 +220,7 @@ const CompararOp = () => {
         const codeprod = row.code;
 
         // Fetch for prod1
-        fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`)
+        fetch(`${back}/products/edit/${codeprod}/${user.name}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Producto no encontrado');
@@ -244,7 +246,7 @@ const CompararOp = () => {
             })
             .catch((error) => {
                 console.error(error);
-                fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`)
+                fetch(`${back}/products/edit/${codeprod}/${user2.name}`)
                     .then((response) => {
                         if (!response.ok) {
                             throw new Error('Producto no encontrado');
@@ -289,7 +291,7 @@ const CompararOp = () => {
             });
 
         // Fetch for prod2
-        fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user2.name}`)
+        fetch(`${back}/products/edit/${codeprod}/${user2.name}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Producto no encontrado');
@@ -315,7 +317,7 @@ const CompararOp = () => {
             })
             .catch((error) => {
                 console.error(error);
-                fetch(`https://stocksystemback-mxpi.onrender.com/products/edit/${codeprod}/${user.name}`)
+                fetch(`${back}/products/edit/${codeprod}/${user.name}`)
                     .then((response) => {
                         if (!response.ok) {
                             throw new Error('Producto no encontrado');
@@ -363,7 +365,7 @@ const CompararOp = () => {
     const handleUpdateProd = async (user, prod, newProd) => {
         try {
             const response = await fetch(
-                `https://stocksystemback-mxpi.onrender.com/products/edit/${prod.code}/${user.name}`,
+                `${back}/products/edit/${prod.code}/${user.name}`,
                 {
                     method: "PUT",
                     headers: {
@@ -382,7 +384,7 @@ const CompararOp = () => {
                     // Si el producto no existe, lo creamos
                     const newProduct = newProd === 'prod1' ? prod1 : prod2;
                     const createResponse = await fetch(
-                        `https://stocksystemback-mxpi.onrender.com/products`,
+                        `${back}/products`,
                         {
                             method: "POST",
                             headers: {
@@ -412,7 +414,7 @@ const CompararOp = () => {
             }
 
             // Actualizar la tabla después de actualizar o crear el producto
-            const updatedProducts = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${user.name}`)
+            const updatedProducts = await fetch(`${back}/products/${user.name}`)
                 .then(response => response.json())
                 .catch(error => {
                     console.error('Error al actualizar la tabla:', error);

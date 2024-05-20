@@ -8,9 +8,9 @@ const Historial = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [fechaDesde, setFechaDesde] = useState("");
     const [fechaHasta, setFechaHasta] = useState("");
-
+    const {back} = useContext(ProvRouteContext)
     useEffect(() => {
-        fetch('https://stocksystemback-mxpi.onrender.com/users')
+        fetch(`${back}/users`)
             .then(response => response.json())
             .then(data => {
                 setUsers(data);
@@ -20,7 +20,7 @@ const Historial = () => {
             });
     }, [])
     const getproductos = (userName) => {
-        fetch(`https://stocksystemback-mxpi.onrender.com/historial/${userName}`)
+        fetch(`${back}/historial/${userName}`)
             .then(response => response.json())
             .then(data => {
                 setProductos(data);

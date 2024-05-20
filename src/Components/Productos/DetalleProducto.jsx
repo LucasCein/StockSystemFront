@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const Detallespanroducto = () => {
     const { productid } = useParams();
     const [prod, setProd] = useState([])
+    const {back} = useContext(ProvRouteContext)
     console.log(productid)
     useEffect(() => {
         // Obtener el idspanroducto de los spanarámetros de la URL
@@ -11,7 +13,7 @@ const Detallespanroducto = () => {
         // Función spanara cargar los datos del spanroducto
         const cargarDatosProducto = async () => {
             try {
-                const respuesta = await fetch(`https://stocksystemback-mxpi.onrender.com/products/${productid}`);
+                const respuesta = await fetch(`${back}/products/${productid}`);
                 const jsonData = await respuesta.json()
                 // Dividimos la cadena de fecha en sus componentes (año, mes, día)
                 let dateParts = jsonData.date.split('-');

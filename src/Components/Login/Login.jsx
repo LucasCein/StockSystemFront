@@ -8,14 +8,14 @@ const Login = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
-    const {userName,setUserName,setUserId}=useContext(ProvRouteContext)
+    const {userName,setUserName,setUserId, back}=useContext(ProvRouteContext)
     useEffect(() => {
         sessionStorage.setItem('userName', name);
     }, [name]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://stocksystemback-mxpi.onrender.com/login', {
+            const response = await fetch(`${back}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 
 const ProdsSugs = ({ name, setProducto, producto, close }) => {
@@ -6,6 +7,7 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
     const [paginaActual, setPaginaActual] = useState(0);
     const [suggestions, setSuggestions] = useState([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const {back}= useContext(ProvRouteContext)
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
@@ -16,7 +18,7 @@ const ProdsSugs = ({ name, setProducto, producto, close }) => {
     }, []);
     const articulosPorPagina = isMobile ? 2 : 5;
     useEffect(() => {
-        fetch('https://stocksystemback-mxpi.onrender.com/products/suggest')
+        fetch(`${back}/products/suggest`)
             .then(response => response.json())
             .then(data => { setArticulos(data), setSuggestions(data) })
             .catch(error => console.error(error));

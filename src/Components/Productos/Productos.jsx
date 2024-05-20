@@ -29,6 +29,7 @@ const Productos = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [stockExcel, setStockExcel] = useState([]);
   const [fileName, setFileName] = useState("");
+  const {back} = useContext(ProvRouteContext);
   // Función para actualizar la lista de productos
   useEffect(() => {
     const datoGuardado = sessionStorage.getItem("userName");
@@ -44,7 +45,7 @@ const Productos = () => {
 
     if (userName == "admin") {
       try {
-        fetch("https://stocksystemback-mxpi.onrender.com/allproducts")
+        fetch(`${back}/allproducts`)
           .then((response) => response.json())
           .then((data) => {
             setAllProducts(data); // Esto establece los productos en tu estado o donde necesites.
@@ -68,7 +69,7 @@ const Productos = () => {
       });
       console.log("filteredprods", prods);
 
-      fetch(`https://stocksystemback-mxpi.onrender.com/productos/admin`, {
+      fetch(`${back}/productos/admin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +89,7 @@ const Productos = () => {
     // Llamada a la API para obtener la lista actualizada
     console.log("user", userName);
     if (userName == "admin") {
-      fetch("https://stocksystemback-mxpi.onrender.com/products")
+      fetch(`${back}/products`)
         .then((response) => response.json())
         .then((data) => {
           setProductos(data); // Esto establece los productos en tu estado o donde necesites.
@@ -97,7 +98,7 @@ const Productos = () => {
         .catch((error) => {
           console.error(error);
         });
-      fetch("https://stocksystemback-mxpi.onrender.com/productos/admin")
+      fetch(`${back}/productos/admin`)
         .then((response) => response.json())
         .then((data) => {
           setProdsAdmin(data); // Esto establece los productos en tu estado o donde necesites.
@@ -109,7 +110,7 @@ const Productos = () => {
     }
     //aaaa
     else {
-      fetch(`https://stocksystemback-mxpi.onrender.com/products/${userName}`)
+      fetch(`${back}/products/${userName}`)
         .then((response) => response.json())
         .then((data) => {
           setProductos(data);
@@ -174,7 +175,7 @@ const Productos = () => {
   const exportToExcel = (apiData, fileName) => {
     console.log("allproducts", allProducts);
     try {
-      fetch(`https://stocksystemback-mxpi.onrender.com/historial`, {
+      fetch(`${back}/historial`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -254,8 +255,8 @@ const Productos = () => {
 
         fetch(
           userName == "admin"
-            ? `https://stocksystemback-mxpi.onrender.com/productos/admin`
-            : `https://stocksystemback-mxpi.onrender.com/products`,
+            ? `${back}/productos/admin`
+            : `${back}/products`,
           {
             method: "DELETE",
             headers: {
@@ -339,7 +340,7 @@ const Productos = () => {
   };
 
   const getExcelStock = () => {
-    fetch(`https://stocksystemback-mxpi.onrender.com/excelstock`, {
+    fetch(`${back}/excelstock`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -356,7 +357,7 @@ const Productos = () => {
   // Simulación de envío de datos al servidor
   function sendDataToServer(data) {
     try {
-      fetch(`https://stocksystemback-mxpi.onrender.com/excelstock`, {
+      fetch(`${back}/excelstock`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

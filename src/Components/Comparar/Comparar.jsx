@@ -3,17 +3,19 @@ import { PlanillasContext } from "./PlanillasContext";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box } from '@mui/material';
 import CustomSpinner from "../CustomSpinner/CustomSpinner";
 import * as XLSX from 'xlsx';
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const Comparar = () => {
     const { fileId, fileId2 } = useContext(PlanillasContext);
     const [excelData, setExcelData] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const rowsPerPage = 15;
+    const {back}=useContext(ProvRouteContext);
 
     useEffect(() => {
         Promise.all([
-            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/planillasistema`).then(res => res.json()),
-            fetch(`https://stocksystemback-mxpi.onrender.com/comparar/planillaoperador`).then(res => res.json())
+            fetch(`${back}/comparar/planillasistema`).then(res => res.json()),
+            fetch(`${back}/comparar/planillaoperador`).then(res => res.json())
         ]).then(([data1, data2]) => {
             const columnsToExclude = ['quantityu', 'quanitityb', 'total'];
             const columnNames1 = Object.keys(data1[0]).filter(col => !columnsToExclude.includes(col));
@@ -57,7 +59,7 @@ const Comparar = () => {
         XLSX.writeFile(wb, "Resultados.xlsx");
 
         // Clear data in the backend after downloading the file
-        fetch('https://stocksystemback-mxpi.onrender.com/comparar/clear-data', {
+        fetch(`${back}/comparar/clear-data`, {
             method: 'DELETE',
         })
         .then(response => {

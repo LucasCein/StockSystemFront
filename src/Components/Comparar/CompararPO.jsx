@@ -7,6 +7,7 @@ import { Toast } from 'primereact/toast';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import { ProvRouteContext } from "../ProvRouteContext/ProvRouteocntext";
 
 const CompararPO = () => {
   const [data, setData] = useState([]);
@@ -14,7 +15,7 @@ const CompararPO = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 15; // Número de filas por página
   const toast = useRef(null);
-
+  const {back}= useContext(ProvRouteContext)
   const handleFileUpload = async (event) => {
     const files = event.files;
     let combinedData = [];
@@ -58,7 +59,7 @@ const CompararPO = () => {
       data: aggregatedData
     };
     console.log(data)
-    fetch('https://stocksystemback-mxpi.onrender.com/comparar/planillaoperador', {
+    fetch(`${back}/comparar/planillaoperador`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
